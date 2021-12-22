@@ -1,0 +1,49 @@
+<mat-toolbar [ngClass]="authService.isRolePoeUser() ? 'mat-elevation-z2 poe-individual' : 'mat-elevation-z0 poe-org'"
+    [color]="authService.isRolePoeUser() ? 'primary' : ''">
+    <button mat-icon-button (click)="navService.toggleSidebar()" *ngIf="!authService.isRolePoeUser()">
+        <mat-icon color="primary">menu</mat-icon>
+    </button>
+    <button mat-button [routerLink]="['/']" >
+        <span style="font-size: 1.4em ; " fxShow="true" fxHide.xs>
+            {{appGlobals.APP_NAME}}
+        </span>
+        <span style="font-size: 1.4em ; " fxShow="false" fxShow.xs>
+            {{appGlobals.APP_NAME_MULTI_LINE_2}}
+        </span>
+    </button>
+    <span style="flex: 1 1 auto;"></span>
+
+    <app-stat-bar *ngIf="authService.isRolePoeUser()" fxShow="true" fxHide.xs [labels]='["Number Of Files Uploaded"]'
+        [values]='[navService.totalTransactionCount]'></app-stat-bar>
+
+    <!-- <app-menu [mode]=menuTypes.topmenu></app-menu> -->
+    <button mat-button [matMenuTriggerFor]="profileMenu">
+        <mat-icon  [color]="authService.isRolePoeUser() ? '' : 'primary'">account_circle</mat-icon>
+    </button>
+    <mat-menu #profileMenu="matMenu" [overlapTrigger]="false" class="mat-elevation-z16">
+        <div style="display: flex; flex-direction: column;text-align: center">
+            <span style="margin: 12px">
+                <button mat-fab [routerLink]="['/my-account']" color="primary">
+                    <mat-icon>person</mat-icon>
+                </button>
+            </span>
+            <mat-card-subtitle style="margin: 12px">
+                {{authService.getFullname() | uppercase}}
+            </mat-card-subtitle>
+            <!-- <mat-card-title style="margin: 4px">
+                {{authService.currentLoggedInUser | uppercase}}
+            </mat-card-title> -->
+        </div>
+
+        <mat-divider style="width: 192px"></mat-divider>
+        <button mat-menu-item mat-stro [routerLink]="['/my-account']">
+            <mat-icon>settings</mat-icon>
+            My Account
+        </button>
+        <mat-divider style="width: 192px"></mat-divider>
+        <button mat-menu-item mat-stro (click)="onLogoutClick()">
+            <mat-icon>power_settings_new</mat-icon>
+            Logout
+        </button>
+    </mat-menu>
+</mat-toolbar>

@@ -1,0 +1,20 @@
+import pymongo
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+mydb = myclient["cdacpoe"]
+mycol = mydb["cdacusers"]
+
+
+data = {
+    	"username": "Admin",
+    	"password": "Admin123",
+    	"role":	"admin",
+	"orgname": "C-DAC",
+	"enable": "true",
+	"token": "",
+	"regDate": ""	
+    
+}
+x = mycol.insert_one(data)
+
+mycol = mydb["bctusers"]
+x = mycol.insert_one(data)

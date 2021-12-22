@@ -1,0 +1,75 @@
+.container {
+    background: linear-gradient(to top, whitesmoke, transparent 90%);
+    width: 100%;
+    height: calc(100% - 48px);
+}
+
+.container-loggedout {
+    /* background: linear-gradient(to top, whitesmoke, transparent 90%); */
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar {
+    width: 240px;
+    height: 100%;
+    background-color: teal;
+}
+
+.titlebar-spacer {
+    flex: 1 1 auto;
+}
+
+.titlebar-icon {
+    padding: 0 14px;
+}
+
+.heading {
+    color: white;
+    background-color: teal;
+    height: 42px
+}
+
+.mat-nav-list a {
+    color: white;
+    height: 48px;
+}
+
+.mat-nav-list a.active {
+    background-color: teal;
+    color: white;
+}
+
+::ng-deep .mat-toolbar {
+    justify-content: center;
+    /* align items in Main Axis */
+}
+
+/* To set fixed navbar position */
+
+/* .inner-sidenav-content {
+    overflow: auto;
+    position: absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    top:64px;
+  }
+
+  .inner-sidenav-content-loggedout {
+    overflow: auto;
+    position: absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    top:0;
+  } */
+
+.mat-drawer-container {
+    height: calc(100%-48px);
+    background-color: whitesmoke;
+}
+/* .mdtool {
+    position: absolute;
+    z-index: 2
+  } */

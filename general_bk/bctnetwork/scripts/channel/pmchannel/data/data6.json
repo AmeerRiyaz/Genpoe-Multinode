@@ -1,0 +1,23 @@
+{
+    "peers": ["peer0.regorg.cdac.in"],
+    "chaincodeName": "pmbct",
+    "vendee": {
+   	 "fullName": "Ashwini Deshbhratar",
+   	 "fathersName": "Vijay",
+   	 "pan": "ABCDE1234A",
+   	 "aadhaar": "145236987507"
+    },
+    "property": {
+   	 "category": "agricultural",
+   	 "surveyNo": "144",
+   	 "subDivision": "1a",
+   	 "district": "Siddipet",
+   	 "mandal": "Chinnakodur",
+   	 "village": "Chinnakodur",
+   	 "areaExtent": "240",
+   	 "sro": "Siddipet"
+
+    },
+    "poetxId": "0"
+}
+

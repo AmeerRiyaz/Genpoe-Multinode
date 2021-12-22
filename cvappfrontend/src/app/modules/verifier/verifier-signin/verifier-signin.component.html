@@ -1,0 +1,39 @@
+<mat-card class="mat-elevation-z0 login-card" flex="50">
+  <mat-card-header class="title-container"><br>
+    <mat-card-title> <span class="title">Confirm Verifier</span> </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="login-form-container" [formGroup]="loginFormGroup" (ngSubmit)="initLoginVerifier()">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="Enter your email">
+        <mat-error *ngIf="email.invalid">{{getEmailValidationMessage()}}</mat-error>
+      </mat-form-field>
+
+      <div style="display: flex; flex-direction: row">
+        <button type="button" color="primary" mat-icon-button matTooltip="Refresh captcha" style="margin-top: 12px;">
+          <mat-icon (click)="getCaptcha()">refresh</mat-icon>
+        </button>
+        <img id="captchaimg">
+        
+        <mat-form-field style="width:100%;">
+          <input matInput formControlName="captchaval" placeholder="Enter captcha" maxlength="4" autocomplete="off">
+          <mat-error *ngIf="captchaval.invalid">{{getCaptchaValidationMessage()}}</mat-error>
+        </mat-form-field>
+      </div>
+      <!-- <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Enter your password">
+                <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
+                    'visibility'}}</mat-icon>
+            </mat-form-field> -->
+
+      <div class="login-action-area">
+        <mat-spinner *ngIf="verifierLoginRequestState.requestInProgress" [diameter]="30" style="align-self: center">
+        </mat-spinner>
+        <button mat-raised-button *ngIf="!verifierLoginRequestState.requestInProgress" color="primary" type="submit"
+          [disabled]="loginFormGroup.invalid">Verify</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

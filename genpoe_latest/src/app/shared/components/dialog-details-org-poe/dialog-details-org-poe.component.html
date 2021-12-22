@@ -1,0 +1,61 @@
+<div id="summary">
+    <p mat-dialog-title class="wrap">Transaction Details</p>
+    <p *ngIf="data.txId" mat-dialog-subtitle class="wrap"><span class="label">Transaction ID : </span>{{data.txId}}</p>
+    <p mat-dialog-subtitle class="wrap"><span class="label">SHA256 : </span>{{data.sha256Hash}}</p>
+    <p mat-dialog-subtitle *ngIf="!data.txId" style="font-weight: bold; color: red;">Invalid Transaction</p>
+    <!-- <p mat-dialog-subtitle class="wrap"><span class="label">Date : </span>{{data.timestamp}}</p> -->
+    <div class="container">
+        <fieldset>
+            <legend>Details</legend>
+            <table>
+
+                <!-- <tr>
+                    <td class="label">File Name</td>
+                    <td>{{data.fileName}}</td>
+                </tr> -->
+                <!-- <tr>
+                    <td class="label">File Type</td>
+                    <td>{{data.fileType}}</td>
+                </tr> -->
+                <!-- <tr>
+                    <td class="label">Doc Type</td>
+                    <td>{{data.documentType}}</td>
+                </tr> -->
+                <!-- <tr >
+                    <td class="label">SHA256</td>
+                    <td><span class='wrap'>{{data.sha256Hash}}</span></td>
+                </tr> -->
+                <!-- <tr>
+                    <td class="label">Transaction Status</td>
+                    <td>{{data.txstatus}}</td>
+                </tr> -->
+
+
+                <tr>
+                    <td class="label">Document Type</td>
+                    <td>{{data.documentType}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Recipient Name</td>
+                    <td>{{data.recipientName}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Recipient Email</td>
+                    <td>{{data.recipientEmail}}</td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>
+<div *ngIf="! data.posHash" style="font-style: italic; color:darkslategray">File not stored for this transaction</div>
+<div mat-dialog-actions>
+    <p *ngIf="! data.posHash" style="font-style: italic">File not stored for this transaction</p>
+    <!-- <button mat-stroked-button *ngIf="data.txId" (click)="downloadReceipt(data)" style='margin-right: 8px'>
+        <mat-icon color='primary'>receipt</mat-icon> Receipt
+    </button> -->
+    <button mat-stroked-button *ngIf="data.posHash" (click)="downloadPosFile(data)">
+            <mat-icon color='primary'>insert_drive_file</mat-icon> View Document
+        </button>
+    <div fxFlex></div> 
+    <button mat-button (click)="close()" cdkFocusInitial>Close</button>
+</div>

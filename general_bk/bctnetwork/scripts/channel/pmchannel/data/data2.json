@@ -1,0 +1,23 @@
+ {
+    "peers": ["peer0.regorg.cdac.in"],
+    "chaincodeName": "pmbct",
+    "vendee": {
+   	 "fullName": "Sandeep Romana",
+   	 "fathersName": "Jagroop Singh",
+   	 "pan": "AOMPR1167H",
+   	 "aadhaar": "987354587651"
+    },
+    "property": {
+   	 "category": "agricultural",
+   	 "surveyNo": "123",
+   	 "subDivision": "34b",
+   	 "district": "RangaReddy",
+   	 "mandal": "Gandipet",
+   	 "village": "Peeramcheruvu",
+   	 "areaExtent": "340",
+   	 "sro": "Rajendra Nagar"
+
+    },
+    "poetxId": "0"
+}
+

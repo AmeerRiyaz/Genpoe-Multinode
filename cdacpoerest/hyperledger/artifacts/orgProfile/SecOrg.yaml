@@ -1,0 +1,11 @@
+name: "Hotel managment"
+x-type: "hlfv1"
+description: "Hotel Management"
+version: "1.0"
+client:
+  organization: SecOrg
+  credentialStore:
+    path: "./hyperledger/crypto-material/certs/fabric-client-kv-SecOrg"
+    cryptoStore:
+      path: "./hyperledger/crypto-material/keystore/fabric-client-kv-SecOrg"
+    wallet: wallet-name

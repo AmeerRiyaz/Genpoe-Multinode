@@ -1,0 +1,1185 @@
+const Student = require('../../models/training/student.model.js');
+const cdacUser = require('../../models/training/cdacusers.model.js');
+const bctUser = require('../../models/bctuser.model');
+const Centre = require('../../models/training/centre.model');
+const Course = require('../../models/training/course.model');
+const gconfig = require("../../config/generalconfig");
+const Captcha = require('./captcha.controller');
+var log4js = require('log4js');
+var logger = log4js.getLogger('poeusers.controller');
+var jwt = require('jsonwebtoken');
+require('../../config/config.js');
+var helper = require('../../hyperledger/helper.js');
+var common = require('../../common/common.js');
+var rtconfig = require('../../config/rtconfig');
+const io = require('socket.io-client');
+var rtelib0 = require('../../rtelib/rte-lib');
+const socket = io(rtconfig.rteserverIP + '/blockchain-nsp');
+var rtelib = new rtelib0(socket);
+var csv = require("fast-csv");
+const fs = require('fs');
+const proofofex = require('../../models/training/certificate.model');
+var centerCodes = require('./centerCodes.json');
+var courseCodes = require('./courseCodes.json');
+const chalk = require('chalk');
+var sleep = require('sleep');
+
+// Create and Save a new user
+exports.studentaccount = async (req, res) => {
+
+	var attr1;
+	var username = req.body.username;
+    var password = req.body.password;
+	var confirmpassword = req.body.confirmpassword;
+	var rollNo = req.body.rollNo;
+    	
+//	logger.info('End point : /signup');
+//	logger.info('User name : ' + username);
+
+	if (!username) {
+		res.send(common.getErrorMessage('\'username\''));
+		return;
+	}
+	if (!password) {
+		res.send(common.getErrorMessage('\'password\''));
+		return;
+    }
+    
+    if (!confirmpassword) {
+		res.send(common.getErrorMessage('\'confirm password\''));
+		return;
+	}
+	if (!rollNo) {
+		res.send(common.getErrorMessage('\'rollNo\''));
+		return;
+	}
+    
+    if(password != confirmpassword){
+		res.send(common.getErrorMessage('\'Mismatch in Password and confirm password\''));
+		return;
+    }
+	
+	Student.findOne({"rollNo":rollNo},async function(err,found){
+		if(err)
+		{
+			console.log(err);
+		}
+		if(found){
+			console.log("student rollNo exist in db");
+			   
+			var role = 'student';
+			var orgName = "ActsOrg";
+			var regdate = new Date();
+			console.log("regdate" +regdate);
+			//token exp 1800 = 30*60 = 30mins
+			//token exp 30days = 30*24*60*60
+			var token = jwt.sign({
+				username: username,		
+				role: role
+			}, gconfig.secret);
+			let response = await helper.getRegisteredUser(username, orgName, attr1, true);
+		//	logger.debug('-- returned from registering the username %s for organization %s', username, orgName);
+			if (response && typeof response !== 'string') {
+		//		logger.debug('Successfully registered the username %s for organization %s', username, orgName);
+				rtelib.raiseEvent('blockchain', 'userRegistration', {
+					ts: common.cts(),
+					userName: username,
+					orgName: orgName,
+					role: role
+				});
+				
+				//check if user exists or not
+		
+				Student.findOne({
+					username: username			
+				}, function (err, user1) {
+					if (user1) {
+							res.json({
+								status: "Failed",
+								message: "User already exists"
+							});
+					} else {
+						// BCT user
+						console.log(rollNo)
+						Student.update({"rollNo":rollNo},{
+							$set: {
+								"username": username,
+								"password": password,
+								"regDate": regdate,
+								"enable": false
+							}
+						
+						},{
+							"multi": true
+						},function(err,user){
+							console.log(user);
+							if (err) {
+								res.json({
+									status: "Failed",
+									message: "Error creating new user: " + err.message
+								});
+							} else {
+								console.log("User saved in db successfully");
+								//	res.statusCode = 200;
+								//	res.message = "User registered successfully";
+								//	res.json(newUser);
+								let cdacuser = new cdacUser({
+									username: username,
+									password: password,
+									role: role,
+									token: token,
+									regDate: regdate,
+									enable: false,
+									reset: false
+							
+								});
+								cdacuser.save((err, newUser) => {
+									if (err) {
+										res.json({
+											status: "Failed",
+											message: "Error creating new user: " + err.message
+										});
+									} else {
+										console.log(newUser +" saved in db successfully");
+										//	res.statusCode = 200;
+										//	res.message = "User registered successfully";
+											/*res.json({status:"Success",
+											message:newUser
+											});*/
+											res.json(response);
+									}
+								});								
+								
+							}
+						})
+					}
+					if (err) {
+						console.log(err);
+					}
+		
+				})
+				
+			} else {
+				logger.debug('Failed to register the username %s for organization %s with::%s', username, orgName, response);
+				res.json({
+					status: "Failed",
+					message: response
+				});
+			}
+		}
+		else{
+			res.send(common.getErrorMessage('\'Roll no not exist\''));
+		return;
+
+		}
+	})
+
+};
+
+
+
+exports.orgaccount = async (req, res) => {
+
+	var attr;
+	var fullname = req.body.fullname;
+	var username = req.body.username;
+    var password = req.body.password;
+    var confirmpassword = req.body.confirmpassword;
+    var centre = req.body.centre;
+    var role = req.body.role;
+	
+	var orgName = "ActsOrg";
+	//logger.info('End point : /org/signup');
+	console.log('User name : ' + username);
+	
+	if (!fullname) {
+		res.send(common.getErrorMessage('\'fullname\''));
+		return;
+	}
+
+	if (!username) {
+		res.send(common.getErrorMessage('\'username\''));
+		return;
+	}
+	if (!password) {
+		res.send(common.getErrorMessage('\'password\''));
+		return;
+    }
+    if (!confirmpassword) {
+		res.send(common.getErrorMessage('\'confirm password\''));
+		return;
+    }
+    
+    if(password != confirmpassword){
+		res.send(common.getErrorMessage('\'Mismatch in Password and confirm password\''));
+		return;
+    }
+    if (!centre) {
+		res.send(common.getErrorMessage('\'centre\''));
+		return;
+    }
+	
+	if (!role) {
+		res.send(common.getErrorMessage('\'role\''));
+		return;
+	}
+	//if (role === "ch") {
+	if(	role === "Centre Head"){
+		attr = "reader";
+	}
+	//if (role === "tc") {
+	if(role === "Training Coordinator")
+		attr = "writer";
+	
+	//if (role === "po") {
+	if(	role === "Placement Officer")
+		attr = "reader";
+	
+	//if (role === "cc") {
+		if(role === "Course Coordinator")
+		attr = "reader";
+	
+	
+	var regdate = Math.floor(Date.now() / 1000) + parseInt(gconfig.jwt_expiretime);
+	if (role === "admin"){		
+	console.log("regdate" +regdate);
+	var token = jwt.sign({
+		//exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
+		//exp: Math.floor(Date.now() / 1000) + parseInt(gconfig.jwt_expiretime),
+		//exp: regdate,
+		fullname: fullname,
+		username: username,
+		orgName: orgName,
+		role: role,
+		centre: centre
+	}, gconfig.secret);
+
+	//encrypt the password with bcrypt
+
+	/*bcrypt.hash(password,"bctuser", function(err,hashe
+		dpwd){
+		password = hashedpwd;
+	});*/
+	let user = new cdacUser({
+		fullname: fullname,
+		username: username,
+		password: password,
+		centre: centre,
+		role: role,
+		token: token,
+		regDate: regdate,
+		enable: false,
+		reset: false
+
+	});
+	user.save((err, newUser) => {
+		if (err) {
+			res.json({
+				status: "Failed",
+				message: "Error creating new user: " + err.message
+			});
+		} else {
+			console.log(newUser +" saved in db successfully");
+			//	res.statusCode = 200;
+			//	res.message = "User registered successfully";
+				res.json({status:"Success",
+				message:newUser
+				});
+		}
+	});
+}
+else {
+	var regdate = new Date();
+console.log("regdate" +regdate);
+//token exp 1800 = 30*60 = 30mins
+//token exp 30days = 30*24*60*60
+var token = jwt.sign({
+	//exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
+	//exp: Math.floor(Date.now().valueOf() / 1000) + 300,
+	exp: Math.floor(Date.now().valueOf() / 1000) + 30*24*60*60,
+	fullname: fullname,
+	username: username,
+	orgName: orgName,
+	role: role,
+	centre: centre
+}, gconfig.secret);
+let response = await helper.getRegisteredUser(username, orgName, attr, true);//
+//logger.debug('-- returned from registering the username %s for organization %s', username, orgName);
+if (response && typeof response !== 'string') {
+//	logger.debug('Successfully registered the username %s for organization %s', username, orgName);
+	rtelib.raiseEvent('blockchain', 'userRegistration', {
+		ts: common.cts(),
+		userName: username,
+		orgName: orgName,
+		role: role
+	});
+	//response.token = token;
+	// storing the userdetails in database
+	let user = new cdacUser({
+		fullname: fullname,
+		username: username,
+		password: password,
+		centre: centre,
+		role: role,
+		token: token,
+		regDate: regdate,
+		enable: false,
+		reset: false
+		
+
+	});
+
+	//check if user exists or not
+
+	cdacUser.findOne({
+		username: username,
+		orgname: orgName
+	}, function (err, user1) {
+		if (user1) {
+			/*User.update({
+					"username": username
+				}, {
+					$set: {
+						"token": token
+					}
+				},
+				function (err, rowsUpdated) {
+					if (err){
+					//	console.log("Update failed:", err);
+					res.json({
+						status: "Failed",
+						message: "Update failed: " + err
+					});
+					}
+					console.log("User updated");
+				})*/
+				res.json({
+					status: "Failed",
+					message: "User already exists"
+				});
+		} else {
+			// BCT user
+			user.save((err, newUser) => {
+				if (err) {
+					res.json({
+						status: "Failed",
+						message: "Error creating new user: " + err.message
+					});
+				} else {
+					console.log("User saved in db successfully");
+					//	res.statusCode = 200;
+					//	res.message = "User registered successfully";
+					//	res.json(newUser);
+					res.json(response);
+				}
+			});
+		}
+		if (err) {
+			console.log(err);
+		}
+
+	})
+	
+} else {
+	logger.debug('Failed to register the username %s for organization %s with::%s', username, orgName, response);
+	res.json({
+		status: "Failed",
+		message: response
+	});
+}
+}
+	
+	
+};
+
+// Retrieve and return all users from the database.
+exports.listcdacusers = (req, res) => {
+	var id = {
+        "_id": -1
+    };
+	
+	cdacUser.find({}).sort(id).then(eachUser => {
+		res.json(eachUser);
+	});
+};
+
+
+exports.studentlogin = (req, res) => {
+    
+    var username = req.body.username;
+    var password = req.body.password;
+  
+    User.findOne({
+        username: username,
+        password: password
+    }, function (err, user1) {
+        
+       if(user1 == null){
+        res.send({
+            status: "Failed",
+            message: 'Username or Password is incorrect'
+        });
+        return;
+	   }
+	   
+	   if(user1.role == "admin"){
+		   	role = "admin";
+	   }
+		
+	    if (user1.role === "sro") {
+			role = "writer";
+		}
+		if (user1.role === "survey") {
+			role = "creator";
+		}
+		if (user1.role === "tahsildar") {
+			role = "writer";
+		}
+		if (user1.role === "other") {
+			role = "reader";
+		}
+	   
+	   //token exp 300 = 5*60 = 5mins
+	   //token exp 1800 = 30*60 = 30mins
+	   var token = jwt.sign({
+		//exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
+       // exp: Math.floor(Date.now().valueOf() / 1000) + parseInt(gconfig.jwt_expiretime),
+	  // exp: Math.floor(Date.now().valueOf() / 1000) + 1800,
+	  exp: Math.floor(Date.now().valueOf() / 1000) + 2592000,
+       // expiryIn: '1hr',
+		username: username,
+		orgName: user1.orgname,
+		role: role
+        }, gconfig.secret);
+        
+        User.update({"username": username}, {$set: {"token": token,"reset": false}},function (err, rowsUpdated) {
+            if(err)
+                logger.debug("Token Update failed:", err);
+            console.log("Token updated");
+        });
+        if (user1 && user1.enable === true) {
+        
+            if(user1.role === "admin"){
+                res.send({
+                    status: "Success",
+                    token: token,
+                    message: "Administrator logged in Successfully"
+                });
+            }
+            else{
+         
+           res.send({
+               status: "Success",
+               token: token,
+               message: "Login Successful"
+           });
+        }
+           
+           
+            //logger.debug(util.format('Decoded from JWT token: username - %s, orgname - %s', decoded.username, decoded.orgName));
+            //return next();
+        } else if (user1 && user1.enable === false) {
+            res.send({
+                status: "Failed",
+                message: 'Token is disabled'
+            });
+            return;
+        } else if(err){
+            res.send({
+                status: "Failed",
+                message: err
+            });
+           return;
+        }
+    });
+   
+};
+
+exports.signin = async (req, res) => {
+    
+    var username = req.body.username;
+	var password = req.body.password;
+	
+	var role;
+
+
+	console.log("in signin");
+
+	let result = await Captcha.validateCaptcha(req);
+	console.log(result);
+
+	if(result === "valid") {
+	
+			
+			cdacUser.findOne({
+				username: username,
+				password: password
+			}, function (err, user1) {
+				
+			   if(user1 == null){
+				res.send({
+					status: "Failed",
+					message: 'Username or Password is incorrect'
+				});
+				return;
+			   }
+			   
+			   if(user1.role == "admin"){
+					   role = "admin";
+			   }
+				
+			   
+			   
+			   //token exp 300 = 5*60 = 5mins
+			   //token exp 1800 = 30*60 = 30mins
+			   var token = jwt.sign({
+				//exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
+			   // exp: Math.floor(Date.now().valueOf() / 1000) + parseInt(gconfig.jwt_expiretime),
+			  // exp: Math.floor(Date.now().valueOf() / 1000) + 1800,
+			  exp: Math.floor(Date.now().valueOf() / 1000) + 2592000,
+			   // expiryIn: '1hr',
+				username: username,
+				orgName: user1.orgname,
+				role: user1.role,
+				centre:user1.centre
+				}, gconfig.secret);
+				
+				cdacUser.update({"username": username}, {$set: {"token": token,"reset": false}},function (err, rowsUpdated) {
+					if(err)
+						logger.debug("Token Update failed:", err);
+					console.log("Token updated");
+				});
+				if (user1 && user1.enable === true) {
+				
+					if(user1.role === "admin"){
+						res.send({
+							status: "Success",
+							token: token,
+							message: "Administrator logged in Successfully"
+						});
+					}
+					else{
+				 
+				   res.send({
+					   status: "Success",
+					   token: token,
+					   message: "Login Successful"
+				   });
+				}
+				   
+				   
+					//logger.debug(util.format('Decoded from JWT token: username - %s, orgname - %s', decoded.username, decoded.orgName));
+					//return next();
+				} else if (user1 && user1.enable === false) {
+					res.send({
+						status: "Failed",
+						message: 'Token is disabled'
+					});
+					return;
+				} else if(err){
+					res.send({
+						status: "Failed",
+						message: err
+					});
+				   return;
+				}
+			});
+		   
+		}
+		else
+		res.send({status:"Failed","message":"Usesrname Password or captcha is incorrect..!"});
+	
+	
+	
+
+  
+    
+};
+
+// Retrieve and return all users from the database.
+exports.listCentres = (req, res) => {
+
+	console.log("*****************");
+	Centre.find({}).then(centre => {
+		/* centre.forEach(centre1 => {
+			res.json(centre1.name);
+			
+		}); */
+		console.log(centre)
+		res.json(centre);
+	});
+	//res.json(['C-DAC Hyderabad']);
+};
+
+
+exports.listCourses = (req, res) => {
+
+	
+	 Course.find({}).then(course => {
+		/*course.forEach(course1 =>{
+		res.json(course1.name);
+		})*/
+		console.log(course);
+		res.json(course);
+	});
+
+	//res.json(['DAC','DSSD','DESD','DITISS'])
+}
+
+exports.listRoles = (req, res) => {
+
+	
+	/*/Course.find({}).then(course => {
+		/*course.forEach(course1 =>{
+		res.json(course1.name);
+		})*/
+		/*res.json(course);
+	});*/
+	let roles = {'Centre Head' : 'View Records','Training Coordinator' : 'Upload, View & Share Records','Course Coordinator' : 'View & Share Records','Placement Officer' : 'View & Share Records'};
+	//res.json(['Centre Head - View Records','Training Coordinator - Upload, View & Share Records','Course Coordinator - View & Share Records','Placement Officer - View & Share Records'])
+	res.json(roles);
+}
+
+//Not using this
+let saveToDb = async (code, name, callback)=>{
+
+	console.log(code)
+	console.log(name)
+
+
+	Centre.findOne({ //Finding whether centre already exists in DB
+		code: code.toString()
+		// code: "503"
+		// }, function (err, cent) {
+		}).then(cent => {
+			// console.log(chalk.bgRed('error in finding centre '+ err));
+			console.log(chalk.bgGreen('Center already exists in DB, cent ' + cent));
+			// if(err) {
+			// 	console.log(chalk.bgRed('error in finding centre '+ err));
+			// 	throw err;
+			// } else if(cent) { // If Centre already exists
+			// 	console.log(chalk.bgGreen('Center already exists in DB, cent ' + cent));
+			// } else { //If not exists then add this new centre to db
+				let cdacCenter = new Centre({
+					name:name,
+					code:code
+				});
+			// 	console.log(chalk.cyan(cdacCenter));
+				cdacCenter.save(async (err, newCenter) => {
+				//cdacCenter.save( (err, newCenter) => {
+					if(err) {
+						console.log(chalk.bgRed('Error in saving center details'));
+						callback(false)
+						throw err;
+					} else {
+						console.log(chalk.bgGreen('New center details saved in DB'));
+						callback(true)
+					}
+	
+				});
+			// }
+	});
+}
+
+
+var findCentreName = function(cCode, done) { //Check the database if Centre exists.
+	Centre.findOne({ code: cCode }, (err, data) => {
+		if (err) {
+			done(err);
+		}
+		done(null, data);
+	})
+};
+
+var SaveCentre = function(cCode, cName, done) { //Adds a new Centre.
+	let cdacCenter = new Centre({
+		name:cName,
+		code:cCode
+	});
+
+	cdacCenter.save( (err, data) => {
+		if(err) {
+			console.log(chalk.bgRed('Error in saving center details'));
+				//callback(false)
+				//throw err;
+			return done(err);
+		} else {
+			console.log(chalk.bgGreen('New center details saved in DB'));
+				//callback(true)
+			return done(null, data)
+		}
+
+	});
+}
+
+
+exports.userdetails = async (req,res) => {
+
+	
+	var fileName = req.body.fileName;
+	var content = req.body.base64;
+	var decode_buf = new Buffer(content,'base64');
+	fs.writeFileSync(fileName,decode_buf);
+
+	var student = new Student();
+
+	csv.fromPath(fileName, {headers: true}, {ignoreEmpty: true})
+    //.on("data", function(data){
+	.on('data', (csvRow) => {
+		csvRow.forEach(function (data) {
+			// Save data on mongo database
+			var rollNo = data.PRN;
+			rollNo = rollNo.trim();
+			console.log(chalk.inverse(rollNo));
+			
+			student.username = "";
+			student.password="";
+			student.regDate="";
+			student.enable=false;
+			student.rollNo=data.PRN.trim();
+			student.name=data.Name;
+			student.email=data.eMail;
+			student.mobileNo=data.MobileNo;
+
+			var year = rollNo.substr(0,2);
+			year = "20"+year;
+			student.year= year;
+					
+			//Retrieving month name from month number
+			var monthsName = ["January", "February", "March", "April", "May", "June", "July", "August","September","October","November","December"];
+			var month = rollNo.substr(2,2);
+			month = monthsName[month-1];
+			student.month= month;
+			var centreCode = rollNo.substr(4,3);
+			var centreName ='';
+
+			var courseid = rollNo.substr(7,2);
+			var courseName = '';
+
+			Centre.findOne({
+				"code": centreCode
+			}, function (err, cdata) {
+				console.log("data in center finding "+ cdata);
+				if(cdata) {
+					console.log("data in center finding "+ cdata.name);
+					centreName = cdata.name;
+					student.centre= cdata.name; //centre name updation from database
+					//searching for course name				
+					Course.findOne({
+						"code": courseid
+					}, function (err, crdata) {
+						console.log("data in Course finding "+ crdata);
+						console.log("data in Course finding "+ crdata.name);
+						if(crdata) {
+							courseName = crdata.name;
+							student.course= crdata.name; //course name updation from database
+							
+							console.log(chalk.bgGreen('courseName is ', courseName));
+	
+							//saving student details to database
+							student.save(function (saveErr, savedetail) {
+								if (saveErr) {
+									  console.log(saveErr)
+								} else {
+									console.log(chalk.inverse("student details saved in DB savedetails = ", savedetail ));
+								}
+						   });
+						}
+					});
+								
+					
+					
+					
+					//console.log(chalk.bgGreen('center is ', centreName));
+				}
+			
+			});
+
+
+			/* student.insertOne({ email: element }, (err, result) => {
+			if (err) {
+				console.log(err);
+			} else {
+				callback(result);
+			}
+			}); */
+		}, this);
+		// })
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+    
+		/* var courseid = rollNo.substr(7,2);
+		var courseName = '';
+		Course.findOne({
+			"code": courseid
+		}, await function (err, cdata) {
+			console.log("data in Course finding "+ cdata);
+			console.log("data in Course finding "+ cdata.name);
+			if(cdata) {
+				courseName = cdata.name;
+				student.update({
+					"rollNo": rollNo
+				}, 
+				{
+					$set: {
+						"course": cdata.name
+					}
+				}, 
+				function (err, courseUpdated) {
+					if (err) {
+						//throw err;
+						console.log(err);
+					}
+					else 
+						console.log(chalk.bgGreen("course name updated"));
+				});
+				//console.log(chalk.bgGreen('courseName is ', courseName));
+			}
+		}); */
+
+		//sleep.msleep(2000); // sleep for 500 milliseconds
+
+    //var No = rollNo.substr(9,3);
+
+    
+       /* var student = new Student(
+           {
+			username:"",
+			password:"",
+			regDate:"",
+			enable:false,
+            rollNo:data.PRN.trim(),
+            name:data.Name,
+            email:data.eMail,
+			mobileNo:data.MobileNo,
+			year: year,
+			month: month,
+			course: courseName,			
+			centre: centreName			
+           }
+       ); */
+       //details=data;
+       
+    })
+    .on("end", function(){
+		console.log(fileName, " parsing completed");
+		res.json({
+			status: "Success",
+			message: "Student details uploaded"
+		})
+    })
+
+}
+
+
+exports.changepassword = async (req, res) => {
+
+	var attr1;
+	var username = req.username;
+	var password = req.body.password;
+	var newpassword = req.body.newpassword;
+    var confirmpassword = req.body.confirmpassword;
+   	
+	//logger.info('End point : /changepassword');
+	//logger.info('User name : ' + username);
+	
+	if (!username) {
+		res.send(common.getErrorMessage('\'username\''));
+		return;
+	}
+	if (!password) {
+		res.send(common.getErrorMessage('\'password\''));
+		return;
+	}
+	if (!newpassword) {
+		res.send(common.getErrorMessage('\'password\''));
+		return;
+    }
+    if (!confirmpassword) {
+		res.send(common.getErrorMessage('\'confirm password\''));
+		return;
+    }
+    
+    if(newpassword != confirmpassword){
+		res.send(common.getErrorMessage('\'Mismatch in NewPassword and confirm password\''));
+		return;
+    }
+   	//check if user exists or not
+
+	cdacUser.findOne({
+		username: username,
+		password: password
+	}, function (err, user1) {
+		if (user1) {
+			cdacUser.update({
+					"username": username
+				}, {
+					$set: {
+						"password": newpassword
+					}
+				},
+				function (err, rowsUpdated) {
+					if (err){
+					//	console.log("Update failed:", err);
+					res.json({
+						status: "Failed",
+						message: "Update failed: " + err
+					});
+					}
+					console.log("User updated");
+					res.json({
+						status: "Success",
+						message: "User updated"
+					});
+				})
+				
+		} 
+	else {
+	logger.debug('Failed to register the username %s for organization %s with::%s', username, orgName, response);
+	res.json({
+		status: "Failed",
+		message: "User not found"
+	});
+	}
+
+});
+	
+};
+
+// Update a user identified by the userId in the request
+exports.update = (req, res) => {
+
+	var token = req.body.token;
+	var enable = req.body.enable;
+	console.log(req.body.enable)
+	cdacUser.update({
+			"token": token
+		}, {
+			$set: {
+				"enable": enable
+			}
+		},
+		function (err, rowsUpdated) {
+			if (err) {
+			//	console.log("Update failed:", err);
+				logger.debug("Update failed:", err);
+				res.json({
+					status: "Failed",
+					message: "User updation failed"
+				});
+			}
+			console.log("User updated");
+		})
+	if (enable === true)
+		res.send({
+			status: "Success",
+			message: "Token enabled"
+		});
+	else
+		res.send({
+			status: "Success",
+			message: "Token disabled"
+		});
+};
+
+exports.totalStudents = (req, res) => {
+
+    Student.find({}).then(student => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json({"NoOfStudents":student.length});
+    })
+    //  res.send("Find Allstudents");
+
+};
+exports.totalregisteredUsers = (req, res) => {
+
+	var Noofstudents;
+	var Nooforgusers;
+	var Noofbctusers;
+	var totalusers;
+
+	bctUser.find({"enable":true}).then(users=>{
+
+		Noofbctusers = users.length;
+		console.log(Noofbctusers);
+		cdacUser.find({"enable":true}).then(users=>{
+
+			Nooforgusers = users.length;
+			console.log(Nooforgusers);
+			Student.find({"enable":true}).then(student => {
+        
+				Noofstudents = student.length;	
+				totalusers = Noofstudents + Nooforgusers + Noofbctusers
+				res.json({"NoOfEnabledUsers":totalusers});
+				});
+		})
+	})
+	
+    
+	
+    //  res.send("Find Allstudents");
+
+};
+
+exports.totalUsers = (req, res) => {
+
+	var Noofstudents;
+	var Nooforgusers;
+	var Noofbctusers;
+	var totalusers;
+
+	bctUser.find({}).then(users=>{
+
+		Noofbctusers = users.length;
+		console.log(Noofbctusers);
+		cdacUser.find({}).then(users=>{
+
+			Nooforgusers = users.length;
+			console.log(Nooforgusers);
+			Student.find({}).then(student => {
+		   
+				Noofstudents = student.length;	
+				console.log(Noofstudents);
+				totalusers = Noofstudents + Nooforgusers + Noofbctusers;
+				console.log(totalusers);
+				res.json({"NoOfUsers":totalusers});
+				});
+				
+		})
+		
+	})
+	
+	
+    //  res.send("Find Allstudents");
+
+};
+
+exports.fetchyear = (req, res) => {
+
+    var centre = req.body.centre;
+    console.log(chalk.bgYellow('inside fetchYear ',centre));
+    Student.find({"centre":centre},{
+		year:1,
+		_id:0
+    }).then(eachCentre => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+		});*/
+		console.log(chalk.bgCyan('inside fetch year:::', eachCentre));
+        res.json(eachCentre);
+    })
+    //  res.send("Find All Properties");
+
+};
+exports.fetchbatch = (req, res) => {
+
+    var centre = req.body.centre;
+    var year = req.body.year;
+    
+    Student.find({"centre":centre,"year":year},{
+        month:1,
+        _id:0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+exports.fetchcourse = (req, res) => {
+
+    var centre = req.body.centre;
+    var year = req.body.year;
+    var batch = req.body.batch;
+    
+    Student.find({"centre":centre,"year":year,"month":batch},{
+        course:1,
+        _id:0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+
+exports.fetchrollNo = (req, res) => {
+
+    var centre = req.body.centre;
+    var year = req.body.year;
+    var batch = req.body.batch;
+    var course = req.body.course;
+    
+    Student.find({"centre":centre,"year":year,"month":batch,"course":course},{
+        rollNo:1,
+        _id:0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+
+exports.fetchCentre = (req, res) => {
+
+    console.log(chalk.bgYellow('inside fetchCentre ', req.body.centre));
+    Student.find({},{
+        centre:1,
+        _id:0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+		});*/
+		console.log(chalk.bgCyan('inside fetchcentre::::', eachPoe));
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+
+

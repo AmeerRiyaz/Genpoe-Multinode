@@ -1,0 +1,25 @@
+{
+  "name": "cdacpoe",
+  "version": "1.0.0",
+  "description": "proof of existence chaincode",
+  "main": "poe-chaincode.js",
+  "engines": {
+    "node": ">=8.4.0",
+    "npm": ">=5.3.0"
+  },
+  "scripts": {
+    "test": "npm test",
+    "start": "node poe-chaincode.js"
+  },
+  "keywords": [
+    "poe",
+    "chaincode"
+  ],
+  "author": "Sandeep Romana (sandeepr@cdac.in)",
+  "license": "ISC",
+  "dependencies": {
+    "fabric-shim": "~1.4.1",
+    "valid-filename": "^2.0.1",
+    "validator": "^10.4.0"
+  }
+}

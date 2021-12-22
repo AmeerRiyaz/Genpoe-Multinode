@@ -1,0 +1,74 @@
+<mat-card class="mat-elevation-z4">
+    <mat-card-header>
+        <mat-card-title>User List</mat-card-title>
+        <!-- <mat-card-subtitle>subtitle</mat-card-subtitle> -->
+        <div fxFlex>
+            <div fxFlex></div>
+            <button mat-raised-button *ngIf="getUsersRequestState.showData" mat-raised-button color="primary" (click)="openAddUserDialog()">
+                <mat-icon>add</mat-icon>
+                Add User
+            </button>
+        </div>
+    </mat-card-header>
+    <mat-card-content class="container-mat-card-content">
+        <!-- USER LIST -->
+        <div *ngIf="!getUsersRequestState.showData" class="container-error">
+            <mat-spinner *ngIf="getUsersRequestState.requestInProgress" [diameter]="30"></mat-spinner>
+            <div *ngIf="!getUsersRequestState.requestInProgress && !getUsersRequestState.showData">
+                <button mat-fab color="warn" (click)="getUsers()">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                {{getUsersRequestState.msgToUser}}
+            </div>
+        </div>
+        <div [hidden]="!getUsersRequestState.showData" class="container-data">
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Search user list</mat-label>
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Enter username">
+                <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-table #table [dataSource]="dataSource" matSort>
+                <ng-container cdkColumnDef="username">
+                    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Username </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.username}} </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="centre">
+                    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Centre </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.centre}} </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="role">
+                    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Role </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.role}} </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="date">
+                    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Registration Date </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.date}} </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="password">
+                    <mat-header-cell *cdkHeaderCellDef> Password </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.password}} </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="enable">
+                    <mat-header-cell *cdkHeaderCellDef> Enable/Disable </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row">
+                        <mat-slide-toggle color="primary" *ngIf="!(row.username === 'Admin')" checked={{row.enable}}
+                            (change)="onChangeUserEnableState($event,row)"></mat-slide-toggle>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="['username','role','centre','enable']; sticky: true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: ['username','role','centre','enable'];"></mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[10, 20,50,100]" showFirstLastButtons></mat-paginator>
+        </div>
+    </mat-card-content>
+    <!-- <mat-card-actions>
+          <button mat-button>Ok</button>
+      </mat-card-actions> -->
+</mat-card>

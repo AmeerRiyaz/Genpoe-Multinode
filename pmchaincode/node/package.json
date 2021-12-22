@@ -1,0 +1,25 @@
+{
+  "name": "pms",
+  "version": "1.0.0",
+  "description": "property management chaincode",
+  "main": "pms-chaincode.js",
+  "engines": {
+    "node": ">=8.4.0",
+    "npm": ">=5.3.0"
+  },
+  "scripts": {
+    "test": "npm test",
+    "start": "node pms-chaincode.js"
+  },
+  "keywords": [
+    "pms",
+    "chaincode"
+  ],
+  "author": "Sandeep Romana (sandeepr@cdac.in)",
+  "license": "ISC",
+  "dependencies": {
+    "fabric-shim": "~1.2.0",
+    "validator": "^10.4.0",
+    "deep-equal": "~1.0.1"
+  }
+}

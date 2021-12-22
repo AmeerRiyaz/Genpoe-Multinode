@@ -1,0 +1,149 @@
+<mat-card class="mat-elevation-z0 main-card">
+
+
+  <mat-card-header *ngIf="!getPoeListRequestState.emptyResponse" style="height: 42px;  margin-left: -40px;">
+    <!-- <mat-card-title style="width: 120px; margin-top: 8px ">{{appGlobals.APP_NAME}}</mat-card-title> -->
+
+    <!-- Search bar web view -->
+    <mat-form-field appearance="outline" style="width: calc(100% - 112px);font-size: 12px; margin-top: -8px">
+      <mat-label>Search</mat-label>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by hash, document type, date etc.">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+    <!-- <div fxFlex></div> -->
+    <button mat-raised-button color="primary" (click)="openPoeUploadDialog()" class="mat-elevation-z4"
+      style="height: 42px; margin-top: -4px; margin-right: -8px ">
+      <mat-icon>add</mat-icon>
+      Upload
+    </button>
+  </mat-card-header>
+  <mat-card-content style="height: calc(100% - 60px); margin-left: -16px; margin-right: -16px">
+
+
+    <!-- Error container -->
+    <div *ngIf="!getPoeListRequestState.showData && !getPoeListRequestState.emptyResponse" class="error-container">
+      <mat-spinner *ngIf="getPoeListRequestState.requestInProgress" [diameter]="30"></mat-spinner>
+      <div *ngIf="!getPoeListRequestState.requestInProgress && !getPoeListRequestState.showData">
+        <button mat-fab color="warn" (click)="getPoeList()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        {{getPoeListRequestState.msgToUser}}
+      </div>
+    </div>
+
+    <!-- Empty Placeholder -->
+    <div *ngIf="!getPoeListRequestState.showData && getPoeListRequestState.emptyResponse" class="error-container">
+      <mat-spinner *ngIf="getPoeListRequestState.requestInProgress" [diameter]="30"></mat-spinner>
+      <div *ngIf="!getPoeListRequestState.requestInProgress && !getPoeListRequestState.showData">
+        <mat-card
+          style="display: flex; flex-direction: column; border: 1px; border-style: dashed; border-color: lightgray;"
+          class="mat-elevation-z4">
+          <img src="./../../../../assets/PoEAS.png" width="128px" style="margin: auto">
+          <div style="margin: 8px"></div>
+          <button mat-raised-button (click)="openPoeUploadDialog()" style="height: 42px; ">
+            <!-- <mat-icon>add</mat-icon> -->
+            Upload
+          </button>
+          <div style="display: flex; flex-direction: column; text-align: center; margin-top: 8px">
+            <span style="font-size: 11px; color: darkslategray">Start Uploading Your Files to Blockchain</span>
+
+          </div>
+        </mat-card>
+        <div style="margin: 8px"></div>
+
+
+      </div>
+
+    </div>
+
+    <div *ngIf="!getPoeListRequestState.showData && getPoeListRequestState.emptyResponse"
+      style="display: flex; flex-direction: column; text-align: center; color: cornflowerblue;">
+      <span>Upload Once, Verify Anytime</span>
+      <span>Verify Ownership & Content Authenticity</span>
+      <span>We Never Reveal Your Data</span>
+    </div>
+
+    <!-- Data Container -->
+    <div [hidden]="!getPoeListRequestState.showData"
+      style="margin-top:2px; background-color: white ; max-height: calc(100% - -32px); overflow-x: auto;">
+      <!-- <mat-form-field appearance="outline" style="width: 100%; margin-top: 2px">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Enter">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field> -->
+      <!-- <div> -->
+      <!-- <mat-checkbox style="margin-left: 8px" (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"> Select/Deselect all
+        </mat-checkbox>
+        <div fxFlex></div> -->
+
+      <!-- SHARE FORM -->
+      <!-- <form [formGroup]="shareForm" style="display: flex">
+          <mat-form-field appearance="outline" style="width: 256px;  margin-right: 8px; margin-top: -12px">
+            <mat-label>Email</mat-label>
+            <input matInput matTooltip="{{ email.invalid ? 'Enter email id to share document details' : '' }}"
+              formControlName="email" placeholder="Enter email id">
+            <mat-error *ngIf="email.invalid">{{getEmailValidationMessage()}}</mat-error>
+          </mat-form-field>
+        </form> -->
+
+      <!-- <mat-progress-spinner class="action-spinner" *ngIf="sharePoeRequestState.requestInProgress"
+          [diameter]="30" mode="indeterminate"></mat-progress-spinner> -->
+      <!-- <div
+          matTooltip="{{ (this.selection.selected.length < 1) ? 'Select documents to share' : !this.shareForm.valid ? 'Enter email id' : 'click to share'}}">
+          <button class="action-button" [disabled]="this.selection.selected.length < 1 || !shareForm.valid"
+            *ngIf="getPoeListRequestState.showData && !sharePoeRequestState.requestInProgress"
+            mat-icon-button (click)="sharePoe()" color="primary">
+            <mat-icon>share</mat-icon>
+          </button>
+        </div> -->
+      <!-- </div> -->
+
+      <div class="card-container">
+
+        <!-- Search bar mobile view -->
+        <!-- <mat-form-field *ngIf="!getPoeListRequestState.emptyResponse" appearance="outline"
+          style="width: 100%;font-size: 12px; margin-top: 4px; height: 42px;" fxShow="false" fxShow.xs>
+          <mat-label>Search</mat-label>
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Enter">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field> -->
+
+
+        <div class="document-card" *ngFor="let item of filteredData">
+
+          <mat-card class="card mat-elevation-z4">
+            <mat-card-header>
+              <mat-card-title> <span style="font-size: 0.8em">{{item.documentType}}</span></mat-card-title>
+              <div fxFlex></div>
+              <div>
+
+                <!-- <mat-checkbox *ngIf="item.txId" (click)="$event.stopPropagation()"
+                  (change)="$event ? selection.toggle(item) : null" [checked]="selection.isSelected(item)">
+                </mat-checkbox> -->
+
+                <button mat-stroked-button *ngIf="item.txId" color="primary"
+                  matTooltip="Click to view transaction details" (click)="openDetailsDialog(item)"><span
+                    style="font-weight: bold">Details</span></button>
+
+
+                <button mat-stroked-button *ngIf="!item.txId" color="warn" matTooltip="Failed Transaction"
+                  (click)="openDetailsDialog(item)"><span style="font-weight: bold">Invalid</span></button>
+
+              </div>
+              <mat-card-subtitle style="margin-left: -14px;">{{item.timestamp | hashtruncate:[24, '']}}
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <span class="wrap">
+                <span class="label">Hash of Document : </span> {{item.sha256Hash}}
+              </span>
+            </mat-card-content>
+          </mat-card>
+
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

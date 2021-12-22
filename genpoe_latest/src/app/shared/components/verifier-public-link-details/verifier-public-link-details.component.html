@@ -1,0 +1,109 @@
+<mat-toolbar color='primary' class="mat-elevation-z4" style="z-index: 1; position: relative;">
+
+    <!-- <span>C-DAC's PoE</span> -->
+    <span style="font-size: x-large ; margin: auto " fxShow="true" fxHide.xs>
+        {{appGlobals.APP_NAME}}
+    </span>
+    <span style="font-size: x-large ; margin: auto" fxShow="false" fxShow.xs>
+        {{appGlobals.APP_NAME_MULTI_LINE_2}}
+    </span>
+
+</mat-toolbar>
+<mat-card style="height: calc(100vh - 112px);overflow: auto">
+
+
+    <div class="error-container" *ngIf="!getTransactionDetailsRequestState.showData">
+        <mat-spinner [diameter]="30" matSuffix *ngIf="getTransactionDetailsRequestState.requestInProgress">
+        </mat-spinner>
+        <!-- <mat-icon *ngIf="!getTransactionDetailsRequestState.requestInProgress">more_horiz</mat-icon> -->
+        <button mat-fab color='primary' *ngIf="!getTransactionDetailsRequestState.requestInProgress"
+            (click)="getTransaction()" matTooltip="Refresh" style="margin: 8px">
+            <mat-icon>refresh</mat-icon>
+        </button>
+        <span style="text-align: center; max-width: 640px;">
+            {{getTransactionDetailsRequestState.msgToUser}}
+        </span>
+    </div>
+
+    <mat-card *ngIf="getTransactionDetailsRequestState.showData "
+        style="display: flex; flex-direction: column; border: 1px; border-style: dashed; border-color: lightgray; max-width: 640px; margin: auto; overflow-x: auto;"
+        class="mat-elevation-z0">
+        <img src="./../../../../assets/PoEAS.png" width="96px" style="margin: auto">
+        <div style="margin: 8px"></div>
+
+        <div style="text-align: center">
+            <mat-card-title>
+                <span class="pmgreenlabel" *ngIf="transactionDetails.found" style="margin: auto">Verification
+                    Successful
+                </span>
+                <span class="pmredlabel" *ngIf="!transactionDetails.found" style="margin: auto">Verification
+                    Failed</span>
+
+
+            </mat-card-title>
+
+
+        </div>
+
+        <mat-card-content *ngIf="transactionDetails.found">
+
+            <!-- INDIVIDUAL USER TRANSACTION -->
+            <div id="summary" *ngIf="!isTransactionFromOrg">
+
+                <p *ngIf="transactionDetails.txId" mat-dialog-subtitle class="wrap"><span class="label">Transaction
+                        ID : </span>{{transactionDetails.txId}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">SHA256 :
+                    </span>{{transactionDetails.sha256Hash}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">File Name :
+                    </span>{{transactionDetails.fileName}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">User :
+                    </span>{{transactionDetails.issuedTo}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">Timestamp :
+                    </span>{{transactionDetails.timestamp.seconds*1000 | date:'yyyy-MM-dd, hh:mm:ss'}}</p>
+
+
+                <div>
+                    <div fxFlex></div>
+                    <button mat-stroked-button *ngIf="transactionDetails.found && this.posHash"
+                        (click)="downloadPosFile(this.posHash)">View Original Document</button>
+                    <div *ngIf="! posHash" style="font-style: italic; color:darkslategray">File not stored for this
+                        transaction</div>
+                </div>
+            </div>
+
+            <!-- ORG TRANSACTION -->
+            <div id="summary" *ngIf="isTransactionFromOrg">
+
+                <p *ngIf="transactionDetails.txId" mat-dialog-subtitle class="wrap"><span class="label">Transaction
+                        ID : </span>{{transactionDetails.txId}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">SHA256 :
+                    </span>{{transactionDetails.sha256Hash}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">Document Type :
+                    </span>{{transactionDetails.documentType}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">Issuer Organization :
+                    </span>{{transactionDetails.issuerOrgName}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">Organization Email :
+                    </span>{{transactionDetails.issuerOrgEmail}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">Recipient Name :
+                    </span>{{transactionDetails.recipientName}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">Recipient Email :
+                    </span>{{transactionDetails.recipientEmail}}</p>
+                <p mat-dialog-subtitle class="wrap"><span class="label">Timestamp :
+                    </span>{{transactionDetails.timestamp.seconds*1000 | date:'yyyy-MM-dd, hh:mm:ss'}}</p>
+
+
+                <div>
+                    <div fxFlex></div>
+                    <button mat-stroked-button *ngIf="transactionDetails.found && this.posHash"
+                        (click)="downloadPosFile(this.posHash)">View Original Document</button>
+                    <div *ngIf="! posHash" style="font-style: italic; color:darkslategray">File not stored for this
+                        transaction</div>
+                </div>
+            </div>
+
+
+
+        </mat-card-content>
+    </mat-card>
+
+</mat-card>

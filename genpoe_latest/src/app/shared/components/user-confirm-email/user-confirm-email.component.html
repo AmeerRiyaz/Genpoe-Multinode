@@ -1,0 +1,16 @@
+<!-- <mat-toolbar color='primary' class="mat-elevation-z4">
+  <span>C-DAC's PoE</span>
+</mat-toolbar> -->
+
+
+<div class="verify-container">
+  <mat-card class="mat-elevation-z8 verify-card">
+    <mat-spinner [diameter]="30" matSuffix *ngIf="activateUserRequest.requestInProgress" style="margin: auto">
+    </mat-spinner>
+    <button mat-fab color="primary" *ngIf="activateUserRequest.showData">
+      <mat-icon>verified_user</mat-icon>
+    </button>
+    <h3 style="color: teal">{{activateUserRequest.msgToUser}}</h3>
+    <button mat-stroked-button (click)="takeToLogin()" color='primary' *ngIf="activateUserRequest.showData">Go To Login Page</button>
+  </mat-card>
+</div>

@@ -1,0 +1,103 @@
+<mat-toolbar class="titlebar mat-elevation-z4">
+
+    <!-- <button mat-icon-button (click)="onHomeClick()" matTooltip="Go Back to Home">
+        <mat-icon>home</mat-icon>
+      </button>
+   -->
+    <span>C-DAC's Proof Of Existence (PoE) for ACTS Certificates</span>
+
+</mat-toolbar>
+<mat-tab-group style="margin-top: 32px" backgroundColor="primary">
+    <mat-tab label="Receipt">
+        <ng-template matTabContent>
+            <mat-card style="height: calc(100vh - 112px);">
+
+
+                <div class="error-container" *ngIf="!getTransactionDetailsRequestState.showData">
+                    <mat-spinner [diameter]="30" matSuffix *ngIf="getTransactionDetailsRequestState.requestInProgress">
+                    </mat-spinner>
+                    <!-- <mat-icon *ngIf="!getTransactionDetailsRequestState.requestInProgress">more_horiz</mat-icon> -->
+                    <button mat-fab *ngIf="!getTransactionDetailsRequestState.requestInProgress"
+                        (click)="getTransaction()" matTooltip="Refresh" style="margin: 8px">
+                        <mat-icon>refresh</mat-icon>
+                    </button>
+                    {{getTransactionDetailsRequestState.msgToUser}}
+                </div>
+                <div *ngIf="getTransactionDetailsRequestState.showData " style="height: 100%;">
+                    <mat-card-title style="margin-left: -14px" *ngIf="!transactionDetails.found">
+                        <h4 class="pmredlabel" *ngIf="!transactionDetails.found">Verification Failed</h4>
+                    </mat-card-title>
+
+                    <!-- <div *ngIf="getTransactionDetailsRequestState.showData ">
+
+
+                    <span *ngIf="getTransactionDetailsRequestState.showData && !transactionDetails.found">
+                        <mat-card class="mat-elevation-z0" style="padding: 8px; margin-top: -8px">
+                            <mat-card-header>
+                                <mat-card-title style="margin-left: -14px"  *ngIf="!transactionDetails.found">
+                                    <h4 class="pmredlabel" *ngIf="!transactionDetails.found">Verification Failed</h4>
+                                </mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content *ngIf="transactionDetails.found">
+                                <table class="pmtable" fxFlex="240">
+                                    <tr class="pmtablerow">
+                                        <td>File Name:</td>
+                                        <td>{{transactionDetails.fileName}}</td>
+                                    </tr>
+                                    <tr class="pmtablerow">
+                                        <td>Document Type:</td>
+                                        <td>{{transactionDetails.documentType}}</td>
+                                    </tr>
+                                    <tr class="pmtablerow">
+                                        <td>Transaction ID:</td>
+                                        <td>{{transactionDetails.txId}}</td>
+                                    </tr>
+                                    <tr class="pmtablerow">
+                                        <td>SHA256 Hash:</td>
+                                        <td>{{transactionDetails.sha256Hash}}</td>
+                                    </tr>
+                                    <tr class="pmtablerow">
+                                        <td>Recorded By:</td>
+                                        <td>{{transactionDetails.issuedByOrg}}</td>
+                                    </tr>
+                                    <tr class="pmtablerow">
+                                        <td>Issued to:</td>
+                                        <td>{{transactionDetails.issuedTo}}</td>
+                                    </tr>
+                                    <tr class="pmtablerow">
+                                        <td>Timestamp:</td>
+                                        <td>{{transactionDetails.timestamp.seconds*1000 | date:'yyyy-MM-dd, hh:mm:ss'}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <div fxFlex></div>
+                                <button *ngIf="transactionDetails.found" mat-raised-button color="primary"
+                                    (click)="downloadPdf()">Download Receipt</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </span>
+
+                </div> -->
+                    <div class="pdfContainer">
+                        <pdf-viewer *ngIf="transactionDetails.found" [src]="receiptB64" [render-text]="true"
+                            style="display: block;">
+                        </pdf-viewer>
+                    </div>
+                    <mat-card-actions>
+                        <div fxFlex></div>
+                        <button mat-raised-button color="primary" (click)="downloadPdfFromBase64()">Download
+                            Receipt</button>
+                    </mat-card-actions>
+                </div>
+
+            </mat-card>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="File" *ngIf="getTransactionDetailsRequestState.showData && posHash">
+        <ng-template matTabContent>
+            <app-verifier-public-link-pos [hashFromInput]=posHash></app-verifier-public-link-pos>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>

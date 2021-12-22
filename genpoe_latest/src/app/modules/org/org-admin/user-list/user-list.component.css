@@ -1,0 +1,24 @@
+.error-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+mat-table {
+    margin-top: -22px;
+    height: 100%;
+    overflow: auto;
+}
+
+.centre-mat-cell {
+    display: flex !important;
+    justify-content: center!important;
+    text-align: center;
+}
+
+.centre-mat-header-cell {
+    display: flex;
+    justify-content: center;
+}

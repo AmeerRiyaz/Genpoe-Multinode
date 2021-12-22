@@ -1,0 +1,41 @@
+<mat-toolbar class="titlebar mat-elevation-z4" *ngIf="showHeader">
+
+  <!-- <button mat-icon-button (click)="onHomeClick()" matTooltip="Go Back to Home">
+      <mat-icon>home</mat-icon>
+    </button>
+ -->
+  <span>C-DAC's Proof Of Existence (PoE) for ACTS Certificates</span>
+
+</mat-toolbar>
+<mat-card [ngStyle]="{'height': showHeader ? 'calc(100vh - 74px)' : 'calc(100vh - 112px)' , 'margin-top' : showHeader ? '41px' : ''}">
+  <!-- style="height: calc(100vh - 74px); margin-top: 41px" -->
+
+  <div class="error-container" *ngIf="!getPosRequestState.showData">
+    <mat-spinner [diameter]="30" matSuffix *ngIf="getPosRequestState.requestInProgress">
+    </mat-spinner>
+    <button mat-fab *ngIf="!getPosRequestState.requestInProgress" (click)="getPos()" matTooltip="Refresh">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+  <div *ngIf="getPosRequestState.showData" class="pdfContainer">
+
+    <pdf-viewer *ngIf="pdfRegex.test(fileExtension)" [src]="fileSrc" [render-text]="true" style="display: block;">
+    </pdf-viewer>
+
+    <img *ngIf="imageRegex.test(fileExtension)" src="{{fileSrc}}"
+      style="display: block;margin-left: auto;margin-right: auto;">
+
+    <!-- <div class="error-container" *ngIf="docRegex.test(fileExtension) || pptRegex.test(fileExtension)">
+      <p>File preview is not available in browser. You can download this file.</p>
+      <button *ngIf="getPosRequestState.showData" mat-raised-button color="primary"
+        (click)="downloadPdfFromBase64()">Download
+        File</button>
+    </div> -->
+  </div>
+  <mat-card-actions>
+    <div fxFlex></div>
+    <button *ngIf="getPosRequestState.showData" mat-raised-button color="primary"
+      (click)="downloadPdfFromBase64()">Download
+      File</button>
+  </mat-card-actions>
+</mat-card>

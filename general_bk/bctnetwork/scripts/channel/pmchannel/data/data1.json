@@ -1,0 +1,22 @@
+{
+    "peers": ["peer0.regorg.cdac.in"],
+    "chaincodeName": "pmbct",
+    "vendee": {
+   	 "fullName": "MaheshPatil",
+   	 "fathersName": "UttamPatil",
+   	 "pan": "AIHPP3344P",
+   	 "aadhaar": "893432333232"
+    },
+    "property": {
+   	 "category": "agricultural",
+   	 "surveyNo": "222",
+   	 "subDivision": "1a",
+   	 "district": "RangaReddy",
+   	 "mandal": "Miyapur",
+   	 "village": "Miyapur",
+   	 "areaExtent": "200",
+   	 "sro": "Shamshabad"
+    },
+    "poetxId": "0"
+}
+

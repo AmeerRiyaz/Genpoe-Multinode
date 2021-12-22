@@ -1,0 +1,102 @@
+<div class="container">
+  <div class="float-div">
+    <div class="float-div-container">
+      <button mat-icon-button style="position: fixed; top: 8px; left: 8px; z-index: 1" *ngIf="currentShow == showArray.SIGNIN" (click)="currentShow = showArray.MENU">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <app-login *ngIf="currentShow == showArray.SIGNIN"></app-login>
+      <div *ngIf="currentShow == showArray.MENU" class="dash-container" style="padding: 8px">
+
+        <mat-card style="padding: 4px;" class="mat-elevation-z4">
+          <div style="display: flex; flex-direction: row">
+            <mat-card class="dash-card mat-elevation-z0" (click)="currentShow = showArray.SIGNIN"
+              (mouseenter)="mouseHovering(0)" (mouseleave)="mouseLeaving(0)">
+              <mat-card-content>
+                <div class="dash-content">
+                  <button mat-fab [ngClass]=" isHovering[0] ? 'mat-elevation-z24' : 'mat-elevation-z2'">
+                    <mat-icon class="dash-icon">person</mat-icon>
+                  </button>
+                </div>
+                <!-- <div class="dash-content" *ngIf="!isHovering[0]">
+                    <mat-icon class="dash-icon">account_circle</mat-icon>
+                  </div>
+                  <div class="dash-content-text" *ngIf="isHovering[0]">
+                    Click for ACTS Sign in
+                  </div> -->
+              </mat-card-content>
+              <mat-card-actions>
+                <div class="dash-title">
+                  ACTS<br>Sign in
+                </div>
+              </mat-card-actions>
+            </mat-card>
+            <mat-divider [vertical]="true"></mat-divider>
+            <mat-card class="dash-card mat-elevation-z0" (click)="navigate('/studentcorner')"
+              (mouseenter)="mouseHovering(1)" (mouseleave)="mouseLeaving(1)">
+              <mat-card-content>
+                <div class="dash-content">
+                  <button mat-fab [ngClass]=" isHovering[1] ? 'mat-elevation-z24' : 'mat-elevation-z2'">
+                    <mat-icon class="dash-icon">people</mat-icon>
+                  </button>
+                </div>
+
+                <!-- <div class="dash-content" *ngIf="!isHovering[1]">
+                  <mat-icon class="dash-icon">people</mat-icon>
+                </div>
+                <div class="dash-content-text" *ngIf="isHovering[1]">
+                  Verifiy Certificate/ Marksheet
+                </div> -->
+              </mat-card-content>
+              <mat-card-actions>
+                <div class="dash-title">
+                  Student Corner
+                </div>
+              </mat-card-actions>
+            </mat-card>
+            <mat-divider [vertical]="true"></mat-divider>
+            <mat-card class="dash-card mat-elevation-z0" (click)="navigate('/verification')"
+              (mouseenter)="mouseHovering(2)" (mouseleave)="mouseLeaving(2)">
+              <mat-card-content>
+
+                <div class="dash-content">
+                  <button mat-fab [ngClass]=" isHovering[2] ? 'mat-elevation-z24' : 'mat-elevation-z2'">
+                    <mat-icon class="dash-icon">done_all</mat-icon>
+                  </button>
+                </div>
+
+                <!-- <div class="dash-content" *ngIf="!isHovering[2]">
+                  <mat-icon class="dash-icon">done_all</mat-icon>
+                </div>
+                <div class="dash-content-text" *ngIf="isHovering[2]">
+                  Verifiy Certificate/ Marksheet
+                </div> -->
+              </mat-card-content>
+              <mat-card-actions>
+                <div class="dash-title">
+                  Certificate Verification
+                </div>
+              </mat-card-actions>
+            </mat-card>
+
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <div class="row top-div">
+    <mat-toolbar class="logo">
+      <img style="max-width: 100%;" src="../../../..{{appGlobals.HREF_BASE}}assets/cdac_full.png" alt="">
+    </mat-toolbar>
+    <mat-toolbar class="title wrap">
+      Proof Of Existence (PoE) for ACTS Certificates
+    </mat-toolbar>
+  </div>
+
+  <div class="row bottom-div">
+    <div class="recent-certificates-row">
+      <app-statistics></app-statistics>
+    </div>
+  </div>
+
+
+</div>

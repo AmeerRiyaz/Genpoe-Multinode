@@ -1,0 +1,23 @@
+ {
+    "peers": ["peer0.regorg.cdac.in"],
+    "chaincodeName": "pmbct",
+    "vendee": {
+   	 "fullName": "Jyostna Grandhi",
+   	 "fathersName": "G Sree Rama Murthy",
+   	 "pan": "ABCDG1234F",
+   	 "aadhaar": "789456123402"
+    },
+    "property": {
+   	 "category": "agricultural",
+   	 "surveyNo": "132",
+   	 "subDivision": "344a",
+   	 "district": "RangaReddy",
+   	 "mandal": "saroornagar",
+   	 "village": "saroornagar",
+   	 "areaExtent": "344",
+   	 "sro": "saroornagarr"
+
+    },
+    "poetxId": "0"
+}
+

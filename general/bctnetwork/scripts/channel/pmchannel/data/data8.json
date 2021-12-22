@@ -1,0 +1,23 @@
+ {
+    "peers": ["peer0.regorg.cdac.in"],
+    "chaincodeName": "pmbct",
+    "vendee": {
+   	 "fullName": "Chittresh Gargwanshi",
+   	 "fathersName": "Lokesh",
+   	 "pan": "BGHFK1245H",
+   	 "aadhaar": "145236987507"
+    },
+    "property": {
+   	 "category": "agricultural",
+   	 "surveyNo": "1531",
+   	 "subDivision": "2a",
+   	 "district": "Mancherial",
+   	 "mandal": "Bachupally",
+   	 "village": "Mancherial",
+   	 "areaExtent": "51",
+   	 "sro": "Wanaparthy"
+
+    },
+    "poetxId": "0"
+}
+

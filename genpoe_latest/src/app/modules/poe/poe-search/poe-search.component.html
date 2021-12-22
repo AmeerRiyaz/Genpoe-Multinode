@@ -1,0 +1,153 @@
+<mat-card class="mat-elevation-z4 main-card">
+  <form [formGroup]="searchForm">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <!-- <mat-icon matPrefix color="primary">search</mat-icon> -->
+      <input matInput placeholder="{{getHint()}}" formControlName="searchKey">
+
+      <mat-hint>
+        <div style="margin-top: 10px">
+          <mat-radio-group formControlName="searchBy" style="color: black">
+            <mat-radio-button color='primary' value="hash" style="margin-right: 16px" [checked]='true'>Search By Hash
+            </mat-radio-button>
+            <mat-radio-button color='primary' value="txnId" style="margin-right: 16px">Search By Transaction Id
+            </mat-radio-button>
+            <!-- <mat-radio-button color='primary' value="txnId" style="margin-right: 16px">Search By Document Id
+            </mat-radio-button>
+            <mat-radio-button color='primary' value="txnId" style="margin-right: 16px">Search By Uploading Document
+            </mat-radio-button> -->
+          </mat-radio-group>
+        </div>
+      </mat-hint>
+
+      <button mat-raised-button matSuffix class="searchButton" color="primary" (click)="searchInPoe()"
+        [disabled]="!searchForm.valid" *ngIf="!searchRequestState.requestInProgress">Search</button>
+    </mat-form-field>
+
+  </form>
+  <br>
+
+  <!-- <span class="pmredlabel">{{msgToUser}}</span> -->
+  <div *ngIf="!searchRequestState.showData && !isSearchByRollNo" class="error-container">
+    <mat-spinner [diameter]="30" matSuffix *ngIf="searchRequestState.requestInProgress"></mat-spinner>
+    <mat-icon *ngIf="!searchRequestState.requestInProgress">search</mat-icon>
+  </div>
+  <span *ngIf="searchRequestState.showData">
+    <mat-card class="mat-elevation-z4" style="padding: 8px;margin-top: 8px">
+      <mat-card-header>
+        <mat-card-title>
+          <!-- <h4>Search Details</h4> -->
+          <!-- <br>{{queryResponse.result.txId}}</h4> -->
+        </mat-card-title>
+        <mat-card-subtitle>
+          <h3 *ngIf="!queryResponse.result.found">
+            <b class="pmredlabel">
+              Document Not Found
+            </b>
+          </h3>
+          <h3 *ngIf="queryResponse.result.found">
+            <b class="pmgreenlabel"> Document Found </b>
+          </h3>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content *ngIf="queryResponse.result.found">
+        <table class="pmtable" fxFlex="240">
+          <tr class="pmtablerow">
+            <td>File Name:</td>
+            <td>{{queryResponse.result.fileName}}</td>
+          </tr>
+          <!-- <tr class="pmtablerow">
+            <td>File Type:</td>
+            <td>{{queryResponse.result.fileType}}</td>
+          </tr> -->
+          <tr class="pmtablerow">
+            <td>Document Type:</td>
+            <td>{{queryResponse.result.documentType}}</td>
+          </tr>
+          <tr class="pmtablerow">
+            <td>Transaction ID:</td>
+            <td>{{queryResponse.result.txId}}</td>
+          </tr>
+          <tr class="pmtablerow">
+            <td>SHA256 Hash:</td>
+            <td>{{queryResponse.result.sha256Hash}}</td>
+          </tr>
+          <tr class="pmtablerow">
+            <td>Recorded By:</td>
+            <td>{{queryResponse.result.issuedByOrg}}</td>
+          </tr>
+          <tr class="pmtablerow">
+            <td>User:</td>
+            <td>{{queryResponse.result.issuedTo}}</td>
+          </tr>
+          <tr class="pmtablerow">
+            <td>Timestamp:</td>
+            <td>{{queryResponse.result.timestamp.seconds*1000 | date:'yyyy-MM-dd, hh:mm:ss'}}</td>
+          </tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </span>
+
+  <div *ngIf="isSearchByRollNo">
+
+    <div *ngFor="let card of queryResponseByRollno">
+      <mat-card class="mat-elevation-z4" style="padding: 8px; margin: 8px">
+        <mat-card-header>
+          <mat-card-title>
+            <!-- <h4>Details</h4> -->
+            <!-- <br>{{card.txId}}</h4> -->
+          </mat-card-title>
+          <mat-card-subtitle>
+            <h3 *ngIf="!card.found">
+              <b class="pmredlabel">
+                Document Not Found
+              </b>
+            </h3>
+            <h3 *ngIf="card.found">
+              <b class="pmgreenlabel"> Document Found </b>
+            </h3>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content *ngIf="card.found">
+          <table class="pmtable" fxFlex="240">
+            <tr class="pmtablerow">
+              <td>File Name:</td>
+              <td>{{card.fileName}}</td>
+            </tr>
+            <!-- <tr class="pmtablerow">
+              <td>File Type:</td>
+              <td>{{card.fileType}}</td>
+            </tr> -->
+            <tr class="pmtablerow">
+              <td>Document Type:</td>
+              <td>{{card.documentType}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td>Transaction ID:</td>
+              <td>{{card.txId}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td>SHA256 Hash:</td>
+              <td>{{card.sha256Hash}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td>Recorded By:</td>
+              <td>{{card.issuedByOrg}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td>User:</td>
+              <td>{{card.issuedTo}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td>Timestamp:</td>
+              <td>{{card.timestamp.seconds*1000 | date:'yyyy-MM-dd, hh:mm:ss'}}</td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+</mat-card>

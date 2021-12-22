@@ -1,0 +1,67 @@
+<!-- <mat-card> -->
+<div class="ac-container">
+  <span style="margin: 32px">
+    <button mat-fab [routerLink]="['/my-account']" color="" style="height: 96px; width: 96px;"
+      class="mat-elevation-z16">
+      <mat-icon>person</mat-icon>
+    </button>
+  </span>
+  <mat-card-title style="margin-bottom: 24px">
+    Welcome, {{authService.getCurrentUser() | titlecase}}
+  </mat-card-title>
+  <!-- <mat-card-subtitle style="margin: 12px">
+      {{authService.getCurrentOrg() | titlecase}}
+    </mat-card-subtitle> -->
+  <div class="action-area">
+    <mat-accordion>
+      <mat-expansion-panel class="mat-elevation-z12" style="margin-bottom: 16px" #pwdpanel expanded=true>
+        <mat-expansion-panel-header>
+          Change Password
+        </mat-expansion-panel-header>
+
+
+        <div>
+
+          <form [formGroup]="changePasswordFormGroup" (ngSubmit)="changePassword()">
+            <div class="form-container">
+              <mat-form-field>
+                <mat-label>Current Password</mat-label>
+                <input type="password" matInput formControlName="password" placeholder="Current Password">
+                <mat-error *ngIf="password.invalid">{{getPasswordValidationMessage()}}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>New Password</mat-label>
+                <input type="password" matInput formControlName="newpassword" placeholder="New Password">
+                <mat-error *ngIf="newpassword.invalid">{{getNewPasswordValidationMessage()}}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Confirm Password</mat-label>
+                <input matInput formControlName="confirmpassword" [type]="hidePassword ? 'password' : 'text'"
+                  placeholder="Confirm your password">
+                <mat-error *ngIf="confirmpassword.invalid">{{getConfirmPasswordValidationMessage()}}</mat-error>
+                <button type='button' mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                  <mat-icon style="font-size: 20px;">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              </mat-form-field>
+
+            </div>
+          </form>
+        </div>
+
+        <mat-action-row>
+          <button mat-button type="button" *ngIf="!changePasswordRequsetState.requestInProgress" (click)="pwdpanel.close()">Cancel</button>
+          <mat-spinner class="register-spinner" *ngIf="changePasswordRequsetState.requestInProgress" [diameter]="30">
+          </mat-spinner>
+          <button class="register-button" (click)="changePassword()" mat-raised-button
+            *ngIf="!changePasswordRequsetState.requestInProgress" color="primary" type="submit"
+            [disabled]="!changePasswordFormGroup.valid">Change Password</button>
+
+        </mat-action-row>
+      </mat-expansion-panel>
+
+    </mat-accordion>
+  </div>
+</div>
+<!-- </mat-card> -->

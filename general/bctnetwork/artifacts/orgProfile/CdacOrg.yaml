@@ -1,0 +1,11 @@
+name: "Hotel management"
+x-type: "hlfv1"
+description: "hotel management"
+version: "1.0"
+client:
+  organization: CdacOrg
+  credentialStore:
+    path: "./hyperledger/crypto-material/certs/fabric-client-kv-CdacOrg"
+    cryptoStore:
+      path: "./hyperledger/crypto-material/keystore/fabric-client-kv-CdacOrg"
+    wallet: wallet-name

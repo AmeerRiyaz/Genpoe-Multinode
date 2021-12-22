@@ -1,0 +1,39 @@
+<!-- WITH ON CLICK CLOSE SIDEBAR -->
+<!-- <mat-nav-list *ngIf="mode=='sidemenu'">
+  <a mat-list-item (click)="navService.closeSidebar()" [routerLink]=[appGlobals.ROUTE_POE_LIST] [routerLinkActive]="['active']">
+    <mat-icon mat-list-icon>list</mat-icon> <span mat-line>List</span>
+  </a>
+  <a mat-list-item (click)="navService.closeSidebar()" [routerLink]=[appGlobals.ROUTE_POE_SEARCH] [routerLinkActive]="['active']">
+    <mat-icon mat-list-icon>search</mat-icon> <span mat-line>Search</span>
+  </a>
+  <a mat-list-item (click)="onLogoutClick()" style="bottom: 0; position: absolute; background-color: lightgrey;">
+    <mat-icon mat-list-icon>power_settings_new</mat-icon> <span mat-line>Logout</span>
+  </a>
+</mat-nav-list> -->
+
+<mat-nav-list *ngIf="mode=='sidemenu'">
+  <div *ngIf="authService.isRoleOrgAdmin()">
+    <a mat-list-item [routerLink]=[appGlobals.ROUTE_POE_ORG_ADMIN_USER_LIST] [routerLinkActive]="['active']">
+      <mat-icon color="primary" mat-list-icon>peoples</mat-icon> <span mat-line>Users</span>
+    </a>
+    <a mat-list-item [routerLink]=[appGlobals.ROUTE_POE_ORG_ADMIN_PROFILE] [routerLinkActive]="['active']">
+      <mat-icon color="primary" mat-list-icon>settings</mat-icon> <span mat-line>Profile</span>
+    </a>
+  </div>
+
+
+  <div *ngIf="authService.isRoleOrgUser()">
+    <a mat-list-item [routerLink]=[appGlobals.ROUTE_POE_ORG_USER_LIST] [routerLinkActive]="['active']">
+      <mat-icon color="primary" mat-list-icon>insert_drive_file</mat-icon> <span mat-line>Documents</span>
+    </a>
+    <a mat-list-item [routerLink]=[appGlobals.ROUTE_POE_ORG_USER_UPLOAD] [routerLinkActive]="['active']">
+      <mat-icon color="primary" mat-list-icon>cloud_upload</mat-icon> <span mat-line>Upload</span>
+    </a>
+  </div>
+</mat-nav-list>
+
+
+<div class="topmenu" fxLayout="row" fxShow="true" fxHide.xs *ngIf="mode=='topmenu'">
+  <button mat-button [routerLink]=[appGlobals.ROUTE_POE_LIST] [routerLinkActive]="['active']">PoE List</button>
+  <button mat-button [routerLink]=[appGlobals.ROUTE_POE_SEARCH] [routerLinkActive]="['active']">PoE Search</button>
+</div>

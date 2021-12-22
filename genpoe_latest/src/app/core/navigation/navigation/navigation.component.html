@@ -1,0 +1,61 @@
+<div *ngIf="navService.canShown; else container" style="height:100%;width:100%;">
+    <app-header *ngIf="authService.isRolePoeUser()">
+
+    </app-header>
+    <mat-sidenav-container [ngClass]="authService.isRolePoeUser() ? 'container-individual' : 'container-org'">
+
+        <mat-sidenav #sidebar position="start" mode="side" class="mat-elevation-z0 sidebar" [opened]="true"
+            *ngIf="!authService.isRolePoeUser()">
+
+            <!-- 
+                setSidebar method called to set the sidebar varibale in service
+                it is required because sidebar is only init after certain checks and misses the oninit
+                so need to manully set it
+            -->
+            <div *ngIf="setSidebar()"></div>
+
+            <mat-toolbar class="mat-elevation-z0" class="logo-container" *ngIf="authService.orgLogo; else placeholder">
+                <img class="logo" [src]="authService.orgLogo">
+            </mat-toolbar>
+            <ng-template #placeholder >
+                <div class="logo-container" style="display: flex;text-align: center;vertical-align: middle;">
+                    <div style="margin: auto;">
+                        <mat-spinner *ngIf="getLogoRequest.requestInProgress" style="margin: auto;" [diameter]=32>
+                        </mat-spinner>
+                        <div *ngIf="getLogoRequest.requestProcessed && !getLogoRequest.requestInProgress">
+                        <!-- <span  class="wrap"
+                            style="font-size: 14px;">
+                            {{getLogoRequest.msgToUser}}
+                        </span> -->
+                        <div style="margin: 8px;"></div>
+                        <button mat-stroked-button *ngIf="currentRoute != profileRoute" [routerLink]="profileRoute">
+                            Upload Logo
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </ng-template>
+            <mat-toolbar>
+                <mat-card-subtitle style="margin: auto ;text-align: center; line-height: 16px;" class="wrap">
+                    {{authService.getOrgname()}}
+                </mat-card-subtitle>
+            </mat-toolbar>
+
+            <app-menu [mode]=menuTypes.sidemenu></app-menu>
+            <app-footer *ngIf="!authService.isRolePoeUser()" [useShortname]="true"></app-footer>
+        </mat-sidenav>
+
+
+        <mat-sidenav-content style="background-color: white;">
+            <app-header *ngIf="!authService.isRolePoeUser()"></app-header>
+            <mat-progress-bar *ngIf="isRouteLoading" color="primary" mode="indeterminate" class="mat-elevation-z2">
+            </mat-progress-bar>
+            <router-outlet [hidden]="isRouteLoading"></router-outlet>
+            <app-footer *ngIf="authService.isRolePoeUser()"></app-footer>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>
+<ng-template #container>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
+</ng-template>

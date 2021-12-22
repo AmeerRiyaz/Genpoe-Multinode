@@ -1,0 +1,15 @@
+PeerOrgs:
+  
+  - Name: <pname>
+    Domain: <pdomain>
+    CA:
+       Hostname: <ca> # implicitly ca.org1.example.com
+   
+    Template:
+      Count: <count>
+      
+      SANS:
+        - <sans>
+    
+    Users:
+      Count: <ucount>

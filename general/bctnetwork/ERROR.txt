@@ -1,0 +1,28 @@
+
+common Error
+	- docker network configuration setup name change with fabric version 	      number
+		- check the fabric network 
+		  $ docker network ls
+		- name displayed in the above command, need to be mentioned
+		  in base.yaml
+		 	-CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=displayed-name
+			 
+	-Issues with chaincode instantiate
+		- run the following command
+			$ docker images
+		- check for the container name "dev-peer*"
+			- if exist, remove the container
+			$ docker rmi containerID
+		- make sure the version mentioned in the package.json of the
+			- chaincode 
+ 			- fabric docker images 
+			- restapi 
+		- verify the start comand in the package.json of chaincode mentions correct chaincode to be started.
+		- check whether orderer domain name is consistent
+			- For eg: check orderer.cdac.in is correctly mentioned in configtx.yaml instead of orderer.example.com
+	- Bad proposal 
+		- check whether network is up	
+		
+	-channel creation failed
+		-Rejecting broadcast of config message from ipaddress:port because of error: error authorizing update: error validating ReadSet: readset expected key [Group]  /Channel/Application at version 0, but got version 1		 
+			-channel already created

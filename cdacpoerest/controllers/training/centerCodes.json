@@ -1,0 +1,296 @@
+   
+    [
+        {
+            "Code": "101",
+            "CentreName": "ACTS New Delhi"
+        },
+        {
+            "Code": "102",
+            "CentreName": "Bytes New Delhi"
+        },
+        {
+            "Code": "103",
+            "CentreName": "SVTL Chandigarh"
+        },
+        {
+            "Code": "105",
+            "CentreName": "KCC Delhi"
+        },
+        {
+            "Code": "110",
+            "CentreName": "CDAC Mohali"
+        },
+        {
+            "Code": "111",
+            "CentreName": "AWWA New Delhi"
+        },
+        {
+            "Code": "201",
+            "CentreName": "CITM Lucknow"
+        },
+        {
+            "Code": "202",
+            "CentreName": "JSI Noida"
+        },
+        {
+            "Code": "204",
+            "CentreName": "GITI Varanasi"
+        },
+        {
+            "Code": "205",
+            "CentreName": "ACTS Noida"
+        },
+        {
+            "Code": "207",
+            "CentreName": "MNNIT Allahabad"
+        },
+        {
+            "Code": "301",
+            "CentreName": "GET Ahmedabad"
+        },
+        {
+            "Code": "302",
+            "CentreName": "Kudos Jaipur"
+        },
+        {
+            "Code": "304",
+            "CentreName": "TWIST Baroda"
+        },
+        {
+            "Code": "306",
+            "CentreName": "GET Surat"
+        },
+        {
+            "Code": "308",
+            "CentreName": "QBIT Jaipur"
+        },
+        {
+            "Code": "309",
+            "CentreName": "NET Sikar"
+        },
+        {
+            "Code": "401",
+            "CentreName": "ACTS Pune"
+        },
+        {
+            "Code": "402",
+            "CentreName": "SIST Thane"
+        },
+        {
+            "Code": "403",
+            "CentreName": "CDAC Mumbai"
+        },
+        {
+            "Code": "404",
+            "CentreName": "MET Mumbai"
+        },
+        {
+            "Code": "405",
+            "CentreName": "CDAC Mumbai"
+        },
+        {
+            "Code": "405",
+            "CentreName": "ADCC Nagpur"
+        },
+        {
+            "Code": "406",
+            "CentreName": "ACCT Nashik"
+        },
+        {
+            "Code": "407",
+            "CentreName": "AMIMR Navi Mumbai"
+        },
+        {
+            "Code": "408",
+            "CentreName": "SIIT Karad"
+        },
+        {
+            "Code": "412",
+            "CentreName": "IACSD Akurdi"
+        },
+        {
+            "Code": "430",
+            "CentreName": "Know IT Pune"
+        },
+        {
+            "Code": "431",
+            "CentreName": "Infoway Pune"
+        },
+        {
+            "Code": "434",
+            "CentreName": "YCP Mumbai"
+        },
+        {
+            "Code": "435",
+            "CentreName": "Soft Nagpur"
+        },
+        {
+            "Code": "437",
+            "CentreName": "VIIT Baramati"
+        },
+        {
+            "Code": "442",
+            "CentreName": "SIIT Pune"
+        },
+        {
+            "Code": "443",
+            "CentreName": "GIRC Indore"
+        },
+        {
+            "Code": "445",
+            "CentreName": "VITA Mumbai"
+        },
+        {
+            "Code": "447",
+            "CentreName": "AET Mumbai"
+        },
+        {
+            "Code": "456",
+            "CentreName": "SP Bhopal"
+        },
+        {
+            "Code": "459",
+            "CentreName": "IET Pune"
+        },
+        {
+            "Code": "461",
+            "CentreName": "IDS Gwalior"
+        },
+        {
+            "Code": "462",
+            "CentreName": "KOKO Dadar"
+        },
+        {
+            "Code": "463",
+            "CentreName": "GOA"
+        },
+        {
+            "Code": "469",
+            "CentreName": "TICA Mumbai"
+        },
+        {
+            "Code": "473",
+            "CentreName": "BKC Nashik"
+        },
+        {
+            "Code": "474",
+            "CentreName": "GI Kolhapur"
+        },
+        {
+            "Code": "475",
+            "CentreName": "AIPL, Solapur"
+        },
+        {
+            "Code": "477",
+            "CentreName": "MACS Indore"
+        },
+        {
+            "Code": "478",
+            "CentreName": "Orlando Indore"
+        },
+        {
+            "Code": "501",
+            "CentreName": "ACTS Bangalore"
+        },
+        {
+            "Code": "502",
+            "CentreName": "VSS Bangalore"
+        },
+        {
+            "Code": "503",
+            "CentreName": "ACTS Hyderabad"
+        },
+        {
+            "Code": "513",
+            "CentreName": "UTL Secynderabad"
+        },
+        {
+            "Code": "515",
+            "CentreName": "SC Hyderabad"
+        },
+        {
+            "Code": "517",
+            "CentreName": "ATM, Mysore"
+        },
+        {
+            "Code": "518",
+            "CentreName": "VTS Bangalore"
+        },
+        {
+            "Code": "519",
+            "CentreName": "CDAC Bangalore Ecity"
+        },
+        {
+            "Code": "601",
+            "CentreName": "SIST Chennai"
+        },
+        {
+            "Code": "602",
+            "CentreName": "TICT Trivandrum"
+        },
+        {
+            "Code": "603",
+            "CentreName": "AIAC Coimbatore"
+        },
+        {
+            "Code": "604",
+            "CentreName": "AICT Chennai"
+        },
+        {
+            "Code": "605",
+            "CentreName": "ER&DCI Kochi"
+        },
+        {
+            "Code": "606",
+            "CentreName": "TICT Madurai"
+        },
+        {
+            "Code": "608",
+            "CentreName": "ACTS Chennai"
+        },
+        {
+            "Code": "609",
+            "CentreName": "CDAC TVM"
+        },
+        {
+            "Code": "611",
+            "CentreName": "BP IT Chennai"
+        },
+        {
+            "Code": "701",
+            "CentreName": "ICSIT Kolkata"
+        },
+        {
+            "Code": "703",
+            "CentreName": "ISDAC Bhubaneswar"
+        },
+        {
+            "Code": "704",
+            "CentreName": "IIP Kolkata"
+        },
+        {
+            "Code": "706",
+            "CentreName": "CDAC Kolkata"
+        },
+        {
+            "Code": "707",
+            "CentreName": "Lakshya Bhubaneshwar"
+        },
+        {
+            "Code": "801",
+            "CentreName": "BIT Ranchi"
+        },
+        {
+            "Code": "802",
+            "CentreName": "CFS Patna"
+        },
+        {
+            "Code": "804",
+            "CentreName": "ASTRIC Patna"
+        },
+        {
+            "Code": "806",
+            "CentreName": "COE Gaya"
+        }
+    ]
+    

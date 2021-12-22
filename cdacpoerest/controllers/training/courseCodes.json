@@ -1,0 +1,54 @@
+   [
+        {
+            "CourseCode": "20",
+            "CourseName": "PG-DAC"
+        },
+        {
+            "CourseCode": "32",
+            "CourseName": "PG-DASS"
+        },
+        {
+            "CourseCode": "30",
+            "CourseName": "PG-DESD"
+        },
+        {
+            "CourseCode": "11",
+            "CourseName": "PG-DGI"
+        },
+        {
+            "CourseCode": "33",
+            "CourseName": "PG-DVLSI"
+        },
+        {
+            "CourseCode": "23",
+            "CourseName": "PG-DITISS"
+        },
+        {
+            "CourseCode": "22",
+            "CourseName": "PG-DSSD"
+        },
+        {
+            "CourseCode": "21",
+            "CourseName": "PG-DMC"
+        },
+        {
+            "CourseCode": "25",
+            "CourseName": "PG-DBDA"
+        },
+        {
+            "CourseCode": "34",
+            "CourseName": "PG-DBIHI"
+        },
+        {
+            "CourseCode": "27",
+            "CourseName": "PG-DHPCSA"
+        },
+        {
+            "CourseCode": "26",
+            "CourseName": "PG-DIoT"
+        },
+        {
+            "CourseCode": "31",
+            "CourseName": "PG-DIVESD"
+        }
+    ]

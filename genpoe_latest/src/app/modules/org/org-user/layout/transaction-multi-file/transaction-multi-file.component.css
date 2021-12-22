@@ -1,0 +1,104 @@
+.main-container-card {
+    padding-top: 12px;
+    width: calc(100% - 2px);
+    height: calc(100% - 16px);
+    display: flex;
+    flex-direction: row;
+    margin: 2px;
+}
+
+.left-container-card {
+    display: flex;
+    flex-direction: column;
+    width: 156px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 8px;
+    border: 1px solid lightgrey;
+    max-height: 64px;
+    overflow: auto;
+    padding: 8px;
+}
+
+.right-container-card {
+    display: flex;
+    flex-direction: column;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 8px;
+    border: 1px solid lightgrey;
+    flex-wrap: wrap;
+    max-height: 64px;
+    overflow: auto;
+    padding: 12px;
+}
+
+form {
+    width: 100%;
+    height: 100%;
+}
+
+mat-form-field {
+    flex: 1 1 auto;
+    max-width: 192px;
+    margin-right: 8px;
+}
+
+.filename-wrap {
+    display: block;
+    width: 128px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* DRAG DROP RELATE */
+
+.example-list-left {
+    width: 158px;
+    height: 100%;
+}
+
+.example-list-right {
+    width: calc(100% - 160px);
+    height: 100%;
+    /* display: flex;
+    flex-direction: column; */
+}
+
+.example-box {
+    
+    margin: auto 4px 2px 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    cursor: move;
+    font-size: 14px;
+    min-height: 160px;
+    height: fit-content;
+}
+
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* END DRAG DROP */

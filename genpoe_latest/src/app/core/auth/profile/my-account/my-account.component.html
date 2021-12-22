@@ -1,0 +1,99 @@
+<div style="display: flex; flex-direction: column;text-align: center">
+  <span style="margin: 24px 0px 16px 0px">
+    <button mat-fab [routerLink]="['/my-account']" color="" style="height: 64px; width: 64px;" class="mat-elevation-z4">
+      <mat-icon>person</mat-icon>
+    </button>
+  </span>
+  <mat-card-title style="margin-bottom: 24px; font-size: 1.2em">
+    Welcome, {{authService.getFullname() | titlecase}}
+  </mat-card-title>
+  <div class="action-area">
+    <mat-card style="text-align: left" class="mat-elevation-z2" *ngIf="authService.isRolePoeUser(); else orgUser">
+      <mat-spinner style="margin: auto;" *ngIf="getProfileRequsetState.requestInProgress" [diameter]="30">
+      </mat-spinner>
+      <div *ngIf="getProfileRequsetState.showData">
+        <tr>
+          <td class="label">Email Address</td>
+          <td> {{authService.getCurrentUser()}} </td>
+        </tr>
+        <tr>
+          <td class="label">Registration Date</td>
+          <td> {{profile ? profile.regDate : "..."}} </td>
+        </tr>
+        <tr>
+          <td class="label">Files Uploaded</td>
+          <td> {{ profile ?  profile.count : "..."}} </td>
+        </tr>
+      </div>
+    </mat-card>
+    <ng-template #orgUser>
+      <mat-card style="text-align: left" class="mat-elevation-z2">
+        <mat-spinner style="margin: auto;" *ngIf="getProfileRequsetState.requestInProgress" [diameter]="30">
+        </mat-spinner>
+        <div *ngIf="getProfileRequsetState.showData">
+          <tr>
+            <td class="label">Email Address</td>
+            <td> {{profile.userOrgemail ? profile.userOrgemail : "..."}} </td>
+          </tr>
+          <tr>
+            <td class="label">Org Name</td>
+            <td> {{profile.userOrgName ? profile.userOrgName : "..."}} </td>
+          </tr>
+          <tr>
+            <td class="label">Registration Date</td>
+            <td> {{profile.regDate ? profile.regDate : "..."}} </td>
+          </tr>
+        </div>
+      </mat-card>
+    </ng-template>
+
+    <div style="margin: 16px;"></div>
+    <mat-accordion>
+
+      <mat-expansion-panel style="margin-bottom: 16px" #pwdpanel>
+        <mat-expansion-panel-header>
+          Change Password
+        </mat-expansion-panel-header>
+        <div>
+
+          <form [formGroup]="changePasswordFormGroup" (ngSubmit)="changePassword()">
+            <div class="form-container">
+              <mat-form-field>
+                <mat-label>Current Password</mat-label>
+                <input type="password" matInput formControlName="password" placeholder="Current Password">
+                <mat-error *ngIf="password.invalid">{{getPasswordValidationMessage()}}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>New Password</mat-label>
+                <input type="password" matInput formControlName="newpassword" placeholder="New Password">
+                <mat-error *ngIf="newpassword.invalid">{{getNewPasswordValidationMessage()}}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Confirm Password</mat-label>
+                <input matInput formControlName="confirmpassword" [type]="hidePassword ? 'password' : 'text'"
+                  placeholder="Confirm your password">
+                <mat-error *ngIf="confirmpassword.invalid">{{getConfirmPasswordValidationMessage()}}</mat-error>
+                <button type='button' mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                  <mat-icon style="font-size: 20px;">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+              </mat-form-field>
+
+            </div>
+          </form>
+        </div>
+        <mat-action-row>
+          <button mat-button type="button" *ngIf="!changePasswordRequsetState.requestInProgress"
+            (click)="pwdpanel.close()">Cancel</button>
+          <mat-spinner class="register-spinner" *ngIf="changePasswordRequsetState.requestInProgress" [diameter]="30">
+          </mat-spinner>
+          <button class="register-button" (click)="changePassword()" mat-raised-button
+            *ngIf="!changePasswordRequsetState.requestInProgress" color="primary" type="submit"
+            [disabled]="!changePasswordFormGroup.valid">Change Password</button>
+
+        </mat-action-row>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>

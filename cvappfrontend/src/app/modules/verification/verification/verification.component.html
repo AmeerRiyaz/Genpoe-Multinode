@@ -1,0 +1,129 @@
+<mat-toolbar class="titlebar mat-elevation-z4 wrap">
+
+  <button mat-icon-button routerLink="/" matTooltip="Go Back to Home">
+    <mat-icon>home</mat-icon>
+  </button>
+
+  <span>C-DAC's Proof Of Existence (PoE) for ACTS Certificates</span>
+
+  <span class="titlebar-spacer"></span>
+</mat-toolbar>
+<mat-card style="height: calc(100% - 24px); top: 40px; overflow-x: auto;" class="mat-elevation-z0">
+  <div>
+    <span *ngIf="!verificationRequest.showData"
+      style="float: none; text-align: center; display: flex;flex-direction: column; padding-top: 64px;">
+      <mat-card-title>{{heading}}</mat-card-title>
+    </span>
+    <div [class.search-box]="!verificationRequest.showData">
+
+      <div style="justify-content: center">
+        <!-- <mat-card-header *ngIf="verificationRequest.showData"> -->
+          <!-- <mat-card-title>{{heading}}</mat-card-title> -->
+          <!-- <mat-card-subtitle>{{heading}}</mat-card-subtitle> -->
+        <!-- </mat-card-header> -->
+        <!-- <mat-card-content> -->
+
+          <form [formGroup]="searchForm" (ngSubmit)="verify()">
+            <button mat-raised-button color="primary" (click)="changeRoute()" matTooltip="Go Back to Search"
+              [class.btns-i]="!verificationRequest.showData" type="button"
+              style="background-color: teal; margin-bottom: 11px; vertical-align: middle">
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+            <mat-form-field class="search-field"
+              [ngStyle]="{'margin-left': !verificationRequest.showData ? '8%' : '5%'}">
+              <mat-label>Roll Number</mat-label>
+              <input matInput formControlName="rollNo" maxlength="12" placeholder="Enter C-DAC ACTS Roll Number"
+                [readonly]="verificationRequest.showData">
+              <mat-error *ngIf="rollNo.invalid">{{getRollNoValidationMessage()}}</mat-error>
+
+            </mat-form-field>
+
+            <div [class.captcha-container]="verificationRequest.showData" style="margin-left: 7%;width: 85%;">
+              <div style="margin: auto">
+                <re-captcha formControlName="recaptcha"></re-captcha>
+              </div>
+              <!-- <img id="captchaimg" style="margin-bottom: -20px; margin-left: 24px; width: 120px; height: 48px;">
+              <button type="button" color="primary" mat-icon-button matTooltip="Refresh captcha"
+                style="margin-top: 12px;">
+                <mat-icon (click)="getCaptcha()">refresh</mat-icon>
+              </button>
+              <mat-form-field style="width: 172px">
+                <input matInput formControlName="captchaval" placeholder="Enter captcha" maxlength="4"
+                  autocomplete="off">
+                <mat-error *ngIf="captchaval.invalid">{{getCaptchaValidationMessage()}}</mat-error>
+              </mat-form-field> -->
+
+            </div>
+            <div class="verify-action-area">
+              <button mat-raised-button color="primary" *ngIf="!verificationRequest.requestInProgress"
+                [disabled]="!searchForm.valid" [class.btns-i]="verificationRequest.showData"
+                style="margin-bottom: 8px; vertical-align: middle; width: 88%;left: 6%;">
+                <mat-icon>search</mat-icon>
+              </button>
+              <mat-spinner *ngIf="verificationRequest.requestInProgress" [diameter]="30" style="align-self: center">
+              </mat-spinner>
+            </div>
+          </form>
+        <!-- </mat-card-bctResult.content> -->
+      </div>
+    </div>
+  </div>
+  <div *ngIf="verificationRequest.showData">
+    <div *ngFor="let card of queryResponse">
+      <mat-card class="mat-elevation-z4" style="margin-top: 8px">
+        <mat-card-header style="margin-left: -12px">
+          <mat-card-title>
+              {{card.bctResult.documentType}}
+          </mat-card-title>
+          <!-- <mat-card-bctResult.subtitle>
+              {{card.bctResult.issuedTo}}
+          </mat-card-bctResult.subtitle> -->
+        </mat-card-header>
+        <mat-card-content *ngIf="card.bctResult.found" style="display: flex; flex-direction: column">
+
+          <table class="pmtable" fxFlex="240">
+            <tr class="pmtablerow">
+              <td class="label">File Name:</td>
+              <td>{{card.bctResult.fileName}}</td>
+            </tr>
+            <!-- <tr class="pmtablerow">
+              <td>File Type:</td>
+              <td>{{card.bctResult.fileType}}</td>
+            </tr> -->
+            <tr class="pmtablerow">
+              <td class="label">Document Type:</td>
+              <td>{{card.bctResult.documentType}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td class="label">Transaction ID:</td>
+              <td>{{card.bctResult.txId}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td class="label">SHA256 Hash:</td>
+              <td>{{card.bctResult.sha256Hash}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td class="label">Recorded By:</td>
+              <td>{{card.bctResult.issuedByOrg}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td class="label">Issued to:</td>
+              <td>{{card.bctResult.issuedTo}}</td>
+            </tr>
+            <tr class="pmtablerow">
+              <td class="label">Timestamp:</td>
+              <td>{{card.bctResult.timestamp.seconds*1000 | date:'yyyy-MM-dd, hh:mm:ss'}}</td>
+            </tr>
+          </table>
+          <div>
+            <div fxFlex></div>
+            <button mat-stroked-button *ngIf="card.bctResult.found && card.posHash"
+              (click)="downloadPosFile(card.posHash, card.bctResult.fileName)">View Original Document</button>
+            <div *ngIf="!card.posHash" style="font-style: italic; color:darkslategray">File not stored for this
+              transaction</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</mat-card>

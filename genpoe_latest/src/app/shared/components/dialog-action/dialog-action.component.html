@@ -1,0 +1,12 @@
+<div class="dialog-container">
+  <h1 mat-dialog-title>{{data.title}}</h1>
+  <div mat-dialog-content>
+    {{data.message}}
+  </div>
+  <br>
+  <div mat-dialog-actions>
+    <div fxFlex></div>
+    <button mat-button (click)="onCancelClick()" >Cancel</button>
+    <button mat-raised-button (click)="onConfirmClick()" color="warn">OK</button>
+  </div>
+</div>

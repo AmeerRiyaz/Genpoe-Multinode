@@ -1,0 +1,29 @@
+.logo-container {
+    background-color: transparent;
+    height: 120px;
+}
+
+.logo {
+    margin: auto;
+    align-self: center;
+    width: auto;
+    height: 80px;
+}
+
+.sidebar {
+    width: 228px; 
+    /* background-color: whitesmoke; */
+}
+.container-org {
+    height: calc(100% - 0px);
+    width: auto;
+    z-index: 0;
+    top: 0px
+}
+
+.container-individual {
+    height: calc(100% - 56px);
+    width: auto;
+    z-index: 0;
+    top: 56px
+}

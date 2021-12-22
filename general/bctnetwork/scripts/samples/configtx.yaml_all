@@ -1,0 +1,250 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+---
+################################################################################
+#
+#   Section: Organizations
+#
+#   - This section defines the different organizational identities which will
+#   be referenced later in the configuration.
+#
+################################################################################
+Organizations:
+
+    # SampleOrg defines an MSP using the sampleconfig.  It should never be used
+    # in production but may be used as a template for other definitions
+    - &OrdererOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: OrdererMSP
+
+        # ID to load the MSP definition as
+        ID: OrdererMSP
+
+        # MSPDir is the filesystem path which contains the MSP configuration
+        MSPDir: ../orderer-org/Orderer/crypto-config/ordererOrganizations/cdac.in/msp/
+
+    - &RegOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: RegMSP
+
+        # ID to load the MSP definition as
+        ID: RegMSP
+
+        MSPDir: ../organizations/RegOrg/crypto-config/peerOrganizations/regorg.cdac.in/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.regorg.cdac.in
+              Port: 7051
+
+    - &RevOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: RevMSP
+
+        # ID to load the MSP definition as
+        ID: RevMSP
+
+        MSPDir: ../organizations/RevOrg/crypto-config/peerOrganizations/revorg.cdac.in/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.revorg.cdac.in
+              Port: 7051
+    
+    - &SurveyOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: SurveyMSP
+
+        # ID to load the MSP definition as
+        ID: SurveyMSP
+
+        MSPDir: ../organizations/SurveyOrg/crypto-config/peerOrganizations/surveyorg.cdac.in/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.surveyorg.cdac.in
+              Port: 7051
+    
+    - &OtherOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: OtherMSP
+
+        # ID to load the MSP definition as
+        ID: OtherMSP
+
+        MSPDir: ../organizations/OtherOrg/crypto-config/peerOrganizations/otherorg.cdac.in/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.otherorg.cdac.in
+              Port: 7051
+
+    - &ActsOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: ActsMSP
+
+        # ID to load the MSP definition as
+        ID: ActsMSP
+
+        MSPDir: ../organizations/ActsOrg/crypto-config/peerOrganizations/actsorg.cdac.in/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.actsorg.cdac.in
+              Port: 7051
+    
+    - &CdachOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: CdachMSP
+
+        # ID to load the MSP definition as
+        ID: CdachMSP
+
+        MSPDir: ../organizations/CdachOrg/crypto-config/peerOrganizations/cdachorg.cdac.in/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.cdachorg.cdac.in
+              Port: 7051
+    
+    - &DemoOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: DemoMSP
+
+        # ID to load the MSP definition as
+        ID: DemoMSP
+
+        MSPDir: ../organizations/DemoOrg/crypto-config/peerOrganizations/demoorg.cdac.in/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.demoorg.cdac.in
+              Port: 7051
+################################################################################
+#
+#   SECTION: Application
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for application related parameters
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the application side of the network
+    Organizations:
+
+################################################################################
+#
+#   SECTION: Orderer
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters
+#
+################################################################################
+Orderer: &OrdererDefaults
+
+    # Orderer Type: The orderer implementation to start
+    # Available types are "solo" and "kafka"
+    OrdererType: solo
+
+    Addresses:
+        - orderer.cdac.in:7050
+
+    # Batch Timeout: The amount of time to wait before creating a batch
+    BatchTimeout: 2s
+
+    # Batch Size: Controls the number of messages batched into a block
+    BatchSize:
+
+        # Max Message Count: The maximum number of messages to permit in a batch
+        MaxMessageCount: 10
+
+        # Absolute Max Bytes: The absolute maximum number of bytes allowed for
+        # the serialized messages in a batch.
+        AbsoluteMaxBytes: 98 MB
+
+        # Preferred Max Bytes: The preferred maximum number of bytes allowed for
+        # the serialized messages in a batch. A message larger than the preferred
+        # max bytes will result in a batch larger than preferred max bytes.
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+        # Brokers: A list of Kafka brokers to which the orderer connects
+        # NOTE: Use IP:port notation
+        Brokers:
+            - 127.0.0.1:9092
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the orderer side of the network
+    Organizations:
+
+################################################################################
+#
+#   Profile
+#
+#   - Different configuration profiles may be encoded here to be specified
+#   as parameters to the configtxgen tool
+#
+################################################################################
+Profiles:
+
+    BCTOrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *RegOrg
+                    - *RevOrg
+                    - *SurveyOrg
+                    - *OtherOrg
+                    - *DemoOrg
+                    - *ActsOrg
+                    - *CdachOrg
+
+    PMBCTorgsChannel:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *RegOrg
+                - *RevOrg
+                - *SurveyOrg
+                - *OtherOrg
+                
+    CdacPoEorgsChannel:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *CdachOrg
+                - *DemoOrg
+                - *ActsOrg

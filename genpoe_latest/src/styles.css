@@ -1,0 +1,68 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import '~material-design-icons/iconfont/material-icons.css';
+@import 'typeface-roboto/index.css';
+body {
+    margin: 0px;
+    height: 100vh;
+    width: 100vw;
+    /* min-width: 680px; */
+    background-color: whitesmoke;
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+.loading-dialog .mat-dialog-container {
+    background-color: transparent;
+    transition: none !important;
+    box-shadow: none !important;
+}
+
+.wrap {
+    white-space: pre-wrap;
+    /* CSS3 */
+    white-space: -moz-pre-wrap;
+    /* Firefox */
+    white-space: -pre-wrap;
+    /* Opera <7 */
+    white-space: -o-pre-wrap;
+    /* Opera 7 */
+    word-wrap: break-word;
+    /* IE */
+}
+
+
+
+/*********** START :: ORG admin/user global styles ************/
+.container-mat-card-org {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    /* border: solid 1px lightgray; */
+    /* overflow-y: auto; */
+}
+/*********** END :: ORG admin/user global styles ************/
+
+
+.elevation-top{
+    box-shadow: 0 -5px 5px -5px lightgray;
+}
+.elevation-left {
+    box-shadow: -6px 0 6px -6px lightgray;
+}
+
+.elevation-bottom {
+    box-shadow: 0 5px 5px -5px lightgray;
+}
+
+.elevation-right {
+    box-shadow: 5px 0 5px -5px lightgray;
+}
+
+.elevation-all {
+    box-shadow: 0 0 4px lightgray;
+}

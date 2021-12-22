@@ -1,0 +1,13 @@
+.poe-individual {
+    z-index: 2;
+    position: fixed;
+    height: 56px;
+}
+
+.poe-org {
+    z-index: 1;
+    position: relative;
+    /* border-bottom: solid 1px lightgray; */
+    background-color: white;
+    height: 56px;
+}

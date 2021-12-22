@@ -1,0 +1,23 @@
+{
+    "peers": ["peer0.regorg.cdac.in"],
+    "chaincodeName": "pmbct",
+    "vendee": {
+   	 "fullName": "Sai Gopal Tatikayala",
+   	 "fathersName": "Babulu",
+   	 "pan": "AFRPT246JQ",
+   	 "aadhaar": "425697123501"
+    },
+    "property": {
+   	 "category": "agricultural",
+   	 "surveyNo": "1234",
+   	 "subDivision": "3a",
+   	 "district": "RangaReddy",
+   	 "mandal": "shamshabad",
+   	 "village": "chevella",
+   	 "areaExtent": "348",
+   	 "sro": "Shamshabad"
+
+    },
+    "poetxId": "0"
+}
+

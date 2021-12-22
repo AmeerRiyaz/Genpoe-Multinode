@@ -1,0 +1,466 @@
+{
+	"id": "5c8e9b86-640c-4372-911d-ed3ee88f42ae",
+	"name": "PropertyTest",
+	"description": null,
+	"auth": null,
+	"events": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e498e451-41c9-4609-a218-662487eb0dd2",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ff3eeaf5-120c-4600-aac3-8e09b4f65ccc",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variables": [
+		{
+			"key": "url",
+			"value": "http://localhost:5000",
+			"description": "",
+			"type": "text",
+			"disabled": false
+		}
+	],
+	"order": [
+		"927ca7c6-226a-469f-b58b-30feda823633",
+		"96dc6fe3-32ba-484a-b28e-8dc847033ce5",
+		"72dc2844-52eb-4bf4-beec-4c7fc4434704"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "72dc2844-52eb-4bf4-beec-4c7fc4434704",
+			"name": "propertysearch_aadhar",
+			"url": "{{url}}/property/search",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"type": "noauth"
+			},
+			"events": [],
+			"folder": null,
+			"responses": [
+				{
+					"id": "66a057db-d1f9-4afe-8a92-fb344ffe9b24",
+					"name": "propertysearch_aadhar",
+					"status": "",
+					"mime": "",
+					"language": "json",
+					"text": "[{\"_id\":\"5b1a3f67fea0e84827998520\",\"fullName\":\"Akshaya\",\"fathersName\":\"Siva\",\"pan\":\"NA\",\"aadhar\":49808080986,\"surveyNo\":\"290\",\"subDivision\":\"5\",\"district\":\"RR\",\"mandal\":\"Gachibowli\",\"village\":\"Gachibowli\",\"areaExtent\":\"300\",\"sro\":\"RR\",\"category\":\"agri\",\"__v\":0}]",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"requestObject": {
+						"url": "http://localhost:4000/property/search",
+						"pathVariableData": [],
+						"queryParams": [],
+						"headerData": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							}
+						],
+						"data": "{\n\t\"aadhar\": \"49808080986\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					},
+					"headers": [
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Origin, X-Requested-With, Content-Type, Accept",
+							"name": "Access-Control-Allow-Headers",
+							"description": "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request."
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET, POST, PUT, DELETE, OPTIONS",
+							"name": "Access-Control-Allow-Methods",
+							"description": "Specifies the method or methods allowed when accessing the resource. This is used in response to a preflight request."
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*",
+							"name": "Access-Control-Allow-Origin",
+							"description": "Specifies a URI that may access the resource. For requests without credentials, the server may specify '*' as a wildcard, thereby allowing any origin to access the resource."
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive",
+							"name": "Connection",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"key": "Content-Length",
+							"value": "262",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 11 Jun 2018 04:45:40 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"106-b0hH0XubZGt3E8btaY8v4gluuBk\"",
+							"name": "ETag",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express",
+							"name": "X-Powered-By",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookies": [],
+					"request": "72dc2844-52eb-4bf4-beec-4c7fc4434704",
+					"collection": "5c8e9b86-640c-4372-911d-ed3ee88f42ae"
+				}
+			],
+			"rawModeData": "{\n\t\"aadhaar\": \"896898800654\"\n}\n\n",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "927ca7c6-226a-469f-b58b-30feda823633",
+			"name": "CreateProperty",
+			"url": "{{url}}/property",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"responses": [
+				{
+					"id": "ce54b252-0b27-4ddf-a388-beff1f7ac598",
+					"name": "http://localhost:4000/property",
+					"status": "",
+					"mime": "",
+					"language": "html",
+					"text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>ReferenceError: Property is not defined<br> &nbsp; &nbsp;at exports.create (/home/cdac/Blockchain_Localgit/pmbctrest/controllers/property.controller.js:6:16)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at next (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/route.js:137:13)<br> &nbsp; &nbsp;at Route.dispatch (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/route.js:112:3)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at /home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:281:22<br> &nbsp; &nbsp;at Function.process_params (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:335:12)<br> &nbsp; &nbsp;at next (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:275:10)<br> &nbsp; &nbsp;at /home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:635:15<br> &nbsp; &nbsp;at next (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:260:14)<br> &nbsp; &nbsp;at Function.handle (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:174:3)<br> &nbsp; &nbsp;at router (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:47:12)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at trim_prefix (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:317:13)<br> &nbsp; &nbsp;at /home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:284:7<br> &nbsp; &nbsp;at Function.process_params (/home/cdac/Blockchain_Localgit/pmbctrest/node_modules/express/lib/router/index.js:335:12)</pre>\n</body>\n</html>\n",
+					"responseCode": {
+						"code": 500,
+						"name": "Internal Server Error",
+						"detail": "A generic error message, given when no more specific message is suitable."
+					},
+					"requestObject": {
+						"url": "http://localhost:4000/property",
+						"pathVariableData": [],
+						"queryParams": [],
+						"headerData": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							}
+						],
+						"data": "{\n\t\"FullName\": \"Akshaya\",\n    \"FatherName\": \"Siva\",\n    \"Identity\":\"Aadhar\",\n    \"Aadhar\": \"49808080986\",\n    \"SurveyNo\":\"290\",\n    \"SubDivision\":\"5\",\n    \"District\":\"RR\",\n    \"Mandal\":\"Gachibowli\",\n    \"Village\":\"Gachibowli\",\n    \"Areaofextent\":\"300\",\n    \"RegisteringSRO\":\"RR\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					},
+					"headers": [
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Origin, X-Requested-With, Content-Type, Accept",
+							"name": "Access-Control-Allow-Headers",
+							"description": "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request."
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET, POST, PUT, DELETE, OPTIONS",
+							"name": "Access-Control-Allow-Methods",
+							"description": "Specifies the method or methods allowed when accessing the resource. This is used in response to a preflight request."
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*",
+							"name": "Access-Control-Allow-Origin",
+							"description": "Specifies a URI that may access the resource. For requests without credentials, the server may specify '*' as a wildcard, thereby allowing any origin to access the resource."
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive",
+							"name": "Connection",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"key": "Content-Length",
+							"value": "2145",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self'",
+							"name": "Content-Security-Policy",
+							"description": "Custom header"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/html; charset=utf-8",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 05 Jun 2018 06:07:54 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff",
+							"name": "X-Content-Type-Options",
+							"description": "The only defined value, \"nosniff\", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express",
+							"name": "X-Powered-By",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookies": [],
+					"request": "927ca7c6-226a-469f-b58b-30feda823633",
+					"collection": "5c8e9b86-640c-4372-911d-ed3ee88f42ae"
+				},
+				{
+					"id": "d270544d-2ea4-4820-9f18-b5a0c6bd702c",
+					"name": "http://localhost:4000/property",
+					"status": "",
+					"mime": "",
+					"language": "json",
+					"text": "{\"_id\":\"5b162f04d019b64ad0714175\",\"FullName\":\"Akshaya\",\"FatherName\":\"Siva\",\"Identity\":\"Aadhar\",\"Aadhar\":\"49808080986\",\"SurveyNo\":\"290\",\"SubDivision\":\"5\",\"District\":\"RR\",\"Mandal\":\"Gachibowli\",\"Village\":\"Gachibowli\",\"Areaofextent\":\"300\",\"RegisteringSRO\":\"RR\",\"__v\":0}",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"requestObject": {
+						"url": "http://localhost:4000/property",
+						"pathVariableData": [],
+						"queryParams": [],
+						"headerData": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": false
+							}
+						],
+						"data": "{\n\t\"FullName\": \"Akshaya\",\n    \"FatherName\": \"Siva\",\n    \"Identity\":\"Aadhar\",\n    \"Aadhar\": \"49808080986\",\n    \"SurveyNo\":\"290\",\n    \"SubDivision\":\"5\",\n    \"District\":\"RR\",\n    \"Mandal\":\"Gachibowli\",\n    \"Village\":\"Gachibowli\",\n    \"Areaofextent\":\"300\",\n    \"RegisteringSRO\":\"RR\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					},
+					"headers": [
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Origin, X-Requested-With, Content-Type, Accept",
+							"name": "Access-Control-Allow-Headers",
+							"description": "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request."
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET, POST, PUT, DELETE, OPTIONS",
+							"name": "Access-Control-Allow-Methods",
+							"description": "Specifies the method or methods allowed when accessing the resource. This is used in response to a preflight request."
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*",
+							"name": "Access-Control-Allow-Origin",
+							"description": "Specifies a URI that may access the resource. For requests without credentials, the server may specify '*' as a wildcard, thereby allowing any origin to access the resource."
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive",
+							"name": "Connection",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"key": "Content-Length",
+							"value": "265",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 05 Jun 2018 06:34:44 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"109-OuakTcmyl6dZx3Yd8hWE5zaRinc\"",
+							"name": "ETag",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express",
+							"name": "X-Powered-By",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookies": [],
+					"request": "927ca7c6-226a-469f-b58b-30feda823633",
+					"collection": "5c8e9b86-640c-4372-911d-ed3ee88f42ae"
+				}
+			],
+			"rawModeData": "{\n\t\"fullName\": \"Test User\",\n    \"fathersName\": \"Test\",\n    \"pan\" : \"BMTP7334B\",\n    \"aadhaar\": \"0\",\n    \"surveyNo\":\"401\",\n    \"subDivision\":\"5\",\n    \"district\":\"Shamshabad\",\n    \"mandal\":\"Shamshabad\",\n    \"village\":\"Shamshabad\",\n    \"areaExtent\":\"200\",\n    \"sro\":\"Shamshabad\",\n    \"category\": \"agri\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "96dc6fe3-32ba-484a-b28e-8dc847033ce5",
+			"name": "GetAllProperty",
+			"url": "{{url}}/property",
+			"description": "",
+			"data": null,
+			"dataMode": "params",
+			"headerData": [],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"responses": [
+				{
+					"id": "6110bf1b-b1cd-4402-a389-53f969e666a0",
+					"name": "http://localhost:4000/property",
+					"status": "",
+					"mime": "",
+					"language": "json",
+					"text": "[{\"_id\":\"5b162afe4f97794801946a1e\",\"FullName\":\"Akshaya\",\"FatherName\":\"Siva\",\"Identity\":\"PAN\",\"PAN\":\"BMTPS7334B\",\"Aadhar\":\"4807899000\",\"SurveyNo\":\"299\",\"SubDivision\":\"1\",\"District\":\"RR\",\"Mandal\":\"Gachibowli\",\"Village\":\"Gachibowli\",\"Areaofextent\":\"300\",\"RegisteringSRO\":\"RR\",\"__v\":0},{\"_id\":\"5b162b434f97794801946a1f\",\"FullName\":\"Sirisha\",\"FatherName\":\"Laxmanna\",\"Identity\":\"PAN\",\"PAN\":\"BMTPS7334B\",\"SurveyNo\":\"299\",\"SubDivision\":\"2\",\"District\":\"RR\",\"Mandal\":\"Gachibowli\",\"Village\":\"Gachibowli\",\"Areaofextent\":\"300\",\"RegisteringSRO\":\"RR\",\"__v\":0}]",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"requestObject": {
+						"url": "http://localhost:4000/property",
+						"pathVariableData": [],
+						"queryParams": [],
+						"headerData": [],
+						"data": null,
+						"method": "GET",
+						"dataMode": "params"
+					},
+					"headers": [
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Origin, X-Requested-With, Content-Type, Accept",
+							"name": "Access-Control-Allow-Headers",
+							"description": "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request."
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET, POST, PUT, DELETE, OPTIONS",
+							"name": "Access-Control-Allow-Methods",
+							"description": "Specifies the method or methods allowed when accessing the resource. This is used in response to a preflight request."
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*",
+							"name": "Access-Control-Allow-Origin",
+							"description": "Specifies a URI that may access the resource. For requests without credentials, the server may specify '*' as a wildcard, thereby allowing any origin to access the resource."
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive",
+							"name": "Connection",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"key": "Content-Length",
+							"value": "545",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 05 Jun 2018 06:27:07 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"221-PQ8KX6Kn3ekX+fQ9myd6so9cNDU\"",
+							"name": "ETag",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express",
+							"name": "X-Powered-By",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookies": [],
+					"request": "96dc6fe3-32ba-484a-b28e-8dc847033ce5",
+					"collection": "5c8e9b86-640c-4372-911d-ed3ee88f42ae"
+				}
+			],
+			"headers": "",
+			"pathVariables": {}
+		}
+	]
+}

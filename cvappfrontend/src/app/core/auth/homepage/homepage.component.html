@@ -1,0 +1,62 @@
+<div class="home-container">
+  <div class="card-container mat-elevation-z12">
+
+    <mat-card class="home-card mat-elevation-z0">
+      <img width="96%" src="../../../..{{appGlobals.HREF_BASE}}assets/cdac_full.png" alt="">
+      <mat-card-header>
+        <mat-card-title><br>Blockchain Powered e-Certificate Verification</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="card-content">
+          <img style="width: 90%" src="../../../..{{appGlobals.HREF_BASE}}assets/home-cvbct.png" alt="">
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+
+        <button *ngIf="currentShow == showArray.SIGNIN" mat-button color="white" (click)="currentShow = showArray.SIGNUP">Student
+          sign up</button>
+        <button *ngIf="currentShow == showArray.SIGNUP || currentShow == showArray.VERIFIER" mat-button color="white"
+          (click)="currentShow = showArray.SIGNIN">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Sign in
+        </button>
+
+        <button *ngIf="currentShow == showArray.SIGNIN" mat-button color="white" (click)="currentShow = showArray.VERIFIER">Verifier</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="signin-card mat-elevation-z0">
+      <!-- <app-login *ngIf="currentShow == showArray.SIGNIN"></app-login>
+      <app-student-signup *ngIf="currentShow == showArray.SIGNUP"></app-student-signup>
+      <app-verifier-signin *ngIf="currentShow == showArray.VERIFIER"></app-verifier-signin> -->
+    </mat-card>
+
+  </div>
+  <div class="singlecard mat-elevation-z12">
+    <mat-card class="signin-card mat-elevation-z0">
+      <img height="50px" src="../../../../{{appGlobals.HREF_BASE}}assets/cdac.png" alt="">
+      <mat-card-header>
+        <mat-card-title><br>e-Certificate Verification</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- <app-login *ngIf="currentShow == showArray.SIGNIN"></app-login>
+        <app-student-signup *ngIf="currentShow == showArray.SIGNUP"></app-student-signup>
+        <app-verifier-signin *ngIf="currentShow == showArray.VERIFIER"></app-verifier-signin> -->
+      </mat-card-content>
+
+      <mat-card-actions>
+        <br>
+        <button *ngIf="currentShow == showArray.SIGNIN" mat-button color="white" (click)="currentShow = showArray.SIGNUP">Student
+          sign up</button>
+        <button *ngIf="currentShow == showArray.SIGNUP || currentShow == showArray.VERIFIER" mat-button color="white"
+          (click)="currentShow = showArray.SIGNIN">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Sign in
+        </button>
+
+        <button *ngIf="currentShow == showArray.SIGNIN" mat-button color="white" (click)="currentShow = showArray.VERIFIER">Verifier</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+<!-- <router-outlet></router-outlet> -->

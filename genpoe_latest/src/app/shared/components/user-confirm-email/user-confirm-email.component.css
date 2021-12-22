@@ -1,0 +1,14 @@
+  .verify-card{
+    padding: 24px;
+    text-align: center;
+    align-items: center;
+    border-radius: 4px;
+  }
+  
+  .verify-container{
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }

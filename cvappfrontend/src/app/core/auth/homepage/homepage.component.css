@@ -1,0 +1,88 @@
+.home-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 94vh;
+    top: 50vh;
+    transform: translateY(-50vh);
+}
+
+.card-container{
+    min-width: 720px;
+    max-width: 75%;
+    min-height: 450px;
+    max-height: 650px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 50vh;
+    transform: translateY(-50vh);
+    background-color: white
+}
+
+.home-card{
+    display: flex;
+    flex-direction: column;
+    background-color: #33ab9f;
+    color: white;
+    padding: 16px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 70vw;
+    /* min-height: inherit;
+    max-height: 650px; */
+    border-radius: 0px;
+}
+.signin-card{    
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 30vw;
+    /* min-height: inherit;
+    max-height: 650px; */
+    min-width: 360px;
+    border-radius: 0px;
+    
+}
+.mat-card-actions {
+    margin-top: auto;
+}
+.mat-card-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40vh;
+}
+button{
+    width: 172px;
+}
+.card-content{
+    position: relative;
+    top: 50vh;
+    transform: translateY(-50vh);
+}
+
+.singlecard{
+    display: none
+}
+@media only screen and (max-width: 768px) {
+    .singlecard {
+        display: block;
+        min-height: 450px;
+        max-height: 650px;
+        min-width: 360px;
+    }
+    .card-container {
+        display: none
+    }
+    .mat-card-actions {
+        margin-top: auto;
+    }
+}

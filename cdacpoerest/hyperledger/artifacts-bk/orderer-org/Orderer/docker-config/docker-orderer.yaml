@@ -1,0 +1,30 @@
+version: '2'
+services:
+  orderer.cdac.in:
+    env_file: ./.env
+    container_name: orderer.cdac.in
+    image: hyperledger/fabric-orderer:${TAG}
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/crypto/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/crypto/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/crypto/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/crypto/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/etc/hyperledger/crypto/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/etc/hyperledger/crypto/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/etc/hyperledger/crypto/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command: orderer
+    ports:
+      - 5050:7050
+    volumes:
+      - /var/hyperledger/ordererorg/orderer.cdac.in:/var/hyperledger/production
+      - ../../crypto-config/ordererOrganizations/cdac.in/orderers/orderer.cdac.in:/etc/hyperledger/crypto/orderer
+      - ../../../channel/:/etc/hyperledger/configtx

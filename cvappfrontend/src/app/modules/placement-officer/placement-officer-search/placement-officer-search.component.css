@@ -1,0 +1,75 @@
+.main-card {
+    height: calc(100% - 32px);
+    overflow-y: auto
+}
+.action-bar{
+    /* margin-bottom: 16px; */
+    display: flex;
+    flex-direction: row;
+    
+}
+.action-button {
+    margin-right: 16px;
+    width: 156px;
+    padding: 4px;
+}
+.action-spinner {
+    /* margin-top: 10px;  */
+    margin-left: 8px;
+    margin-right: 8px
+}
+
+.mat-form-field{
+    width: 156px;
+    max-width: auto;
+    margin-right: 8px;
+    font-size: 13px;
+}
+
+
+mat-cell{
+    display:flex !important;
+    justify-content:center!important;
+    text-align: center;
+}
+.mat-row:hover {
+    background-color: whitesmoke;
+}
+.mat-header-cell {
+    display:flex;
+    justify-content:center;
+}
+.mat-card-title{
+    margin-left: -16px;
+}
+
+/* .error-container{
+    height: 55vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+} */
+
+mat-table{
+    margin-top: -8px;
+    height: calc(100% - 116px);
+    overflow: auto;
+}
+.shareButton{
+    background-color: teal; 
+    color: white;
+}
+/* 
+.share-container{
+    display: flex;
+    flex-direction: rows
+} */
+.share-search-container{
+    display: flex;
+    flex-direction: rows
+}
+
+.container-mat-card-content {
+    height: calc(100% - 72px);
+  }

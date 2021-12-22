@@ -1,0 +1,57 @@
+<mat-card *ngIf="!displayMessage" class="mat-elevation-z0 signup-card" flex="50">
+  <mat-card-header class="title-container"><br>
+    <mat-card-title> <span class="title">Student sign up</span> </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="signup-form-container" [formGroup]="signupFormGroup" (ngSubmit)="signup()">
+
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" placeholder="Enter username">
+        <mat-error *ngIf="username.invalid">{{getUsernameValidationMessage()}}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Roll no</mat-label>
+        <input matInput formControlName="rollNo" placeholder="Enter your C-DAC ACTS roll no">
+        <mat-error *ngIf="rollNo.invalid">{{getRollNoValidationMessage()}}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="Enter your password">
+        <mat-error *ngIf="password.invalid">{{getPasswordValidationMessage()}}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Confirm Password</mat-label>
+        <input matInput formControlName="confirmpassword" [type]="hidePassword ? 'password' : 'text'" placeholder="Confirm your password">
+        <mat-error *ngIf="confirmpassword.invalid">{{getConfirmPasswordValidationMessage()}}</mat-error>
+        <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
+          'visibility'}}</mat-icon>
+      </mat-form-field>
+
+      <div class="signup-action-area">
+        <mat-spinner *ngIf="signupRequestState.requestInProgress" [diameter]="30" style="align-self: center"></mat-spinner>
+        <button mat-raised-button *ngIf="!signupRequestState.requestInProgress" color="primary" type="submit"
+          [disabled]="signupFormGroup.invalid">Sign
+          up</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="displayMessage" class="signup-card mat-elevation-z0">
+  
+  <mat-card-header>
+    <mat-card-title style="margin-left: -12px">Signup Successful</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    Your account will be activated shortly.
+  </mat-card-content>
+  <mat-card-actions>
+    <div fxFlex></div>
+    <button mat-raised-button color="primary" (click)="closeDialog()">Close</button>
+  </mat-card-actions>
+</mat-card>
+
+<div>
+  
+</div>

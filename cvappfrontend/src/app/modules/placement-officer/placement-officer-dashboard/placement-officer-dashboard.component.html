@@ -1,0 +1,72 @@
+<mat-card style="height: calc(100% - 32px);">
+    <mat-card-header style="float: right; text-align: right; display: flex;flex-direction: column">
+        <mat-card-title>Welcome {{username | titlecase}} </mat-card-title>
+        <mat-card-subtitle style="text-align: right;">{{role}} at {{centre}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="container-mat-card-content">
+        <div class="dash-container">
+            <mat-card class="dash-card" [ngClass]="isHovering[0] ? 'mat-elevation-z3' : 'mat-elevation-z0'"
+                (click)="navigate('placement/certificates')" (mouseenter)="mouseHovering(0)"
+                (mouseleave)="mouseLeaving(0)">
+                <mat-card-content>
+                    <div class="dash-content" *ngIf="!isHovering[0]">
+                        <mat-icon class="dash-icon">credit_card</mat-icon>
+                    </div>
+                    <div class="dash-content-text" *ngIf="isHovering[0]">
+                        Click to view or share certificates
+                    </div>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <mat-card-actions>
+                    <div class="dash-title">
+                        Certificates
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+
+            <mat-card class="dash-card" [ngClass]="isHovering[1] ? 'mat-elevation-z3' : 'mat-elevation-z0'"
+                (click)="navigate('placement/search')" (mouseenter)="mouseHovering(1)" (mouseleave)="mouseLeaving(1)">
+                <mat-card-content>
+                    <div class="dash-content" *ngIf="!isHovering[1]">
+                        <mat-icon class="dash-icon">search</mat-icon>
+                    </div>
+                    <div class="dash-content-text" *ngIf="isHovering[1]">
+                        Click to search by roll number, transaction id or document hash
+                    </div>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <mat-card-actions>
+                    <div class="dash-title">
+                        Search
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+        <div class="description-container">
+            <mat-card class="description-card mat-elevation-z0">
+                <mat-card-header>
+                    <mat-card-subtitle>Screenshots</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content style="height: 87%">
+                    <slideshow [imageUrls]="imageUrlArray" [autoPlay]="true"></slideshow>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="description-card mat-elevation-z0">
+                <mat-card-header>
+                    <mat-card-subtitle>Description</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content style="height: 87%">
+                    <ul>
+                        <li>Allowed Operations
+                            <ul>
+                                <li> View the List of uploaded Certificates </li>
+                                <li> Share the Uploaded Certificates to Others(Ex: Recruiters) via eMail</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <app-statistics></app-statistics>
+    </mat-card-content>
+</mat-card>

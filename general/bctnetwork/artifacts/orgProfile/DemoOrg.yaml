@@ -1,0 +1,11 @@
+name: "PoE Application"
+x-type: "hlfv1"
+description: "PoE Application"
+version: "1.0"
+client:
+  organization: DemoOrg
+  credentialStore:
+    path: "./hyperledger/crypto-material/certs/fabric-client-kv-DemoOrg"
+    cryptoStore:
+      path: "./hyperledger/crypto-material/keystore/fabric-client-kv-DemoOrg"
+    wallet: wallet-name

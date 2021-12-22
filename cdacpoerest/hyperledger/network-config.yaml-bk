@@ -1,0 +1,325 @@
+---
+#
+# The network connection profile provides client applications the information about the target
+# blockchain network that are necessary for the applications to interact with it. These are all
+# knowledge that must be acquired from out-of-band sources. This file provides such a source.
+#
+name: "pms-network"
+
+#
+# Any properties with an "x-" prefix will be treated as application-specific, exactly like how naming
+# in HTTP headers or swagger properties work. The SDK will simply ignore these fields and leave
+# them for the applications to process. This is a mechanism for different components of an application
+# to exchange information that are not part of the standard schema described below. In particular,
+# the "x-type" property with the "hlfv1" value example below is used by Hyperledger Composer to
+# determine the type of Fabric networks (v0.6 vs. v1.0) it needs to work with.
+#
+x-type: "hlfv1"
+
+#
+# Describe what the target network is/does.
+#
+description: "Property Managment for Land Registration"
+
+#
+# Schema version of the content. Used by the SDK to apply the corresponding parsing rules.
+#
+version: "1.0"
+
+#
+# The client section will be added on a per org basis see org1.yaml and org2.yaml
+#
+#client:
+
+#
+# [Optional]. But most apps would have this section so that channel objects can be constructed
+# based on the content below. If an app is creating channels, then it likely will not need this
+# section.
+#
+channels:
+
+  cdacpoechannel:
+    # Required. list of orderers designated by the application to use for transactions on this
+    # channel. This list can be a result of access control ("org1" can only access "ordererA"), or
+    # operational decisions to share loads from applications among the orderers.  The values must
+    # be "names" of orgs defined under "organizations/peers"
+    orderers:
+      - orderer.cdac.in
+
+    # Required. list of peers from participating orgs
+    peers:
+          
+      peer0.cdachorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.cdachorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      
+      peer0.actsorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.actsorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer0.demoorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.demoorg.cdac.in:
+        endorsingPeer: true 
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true  
+      
+
+      peer0.cdactmorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.cdactmorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+  generalpoechannel:
+    # Required. list of orderers designated by the application to use for transactions on this
+    # channel. This list can be a result of access control ("org1" can only access "ordererA"), or
+    # operational decisions to share loads from applications among the orderers.  The values must
+    # be "names" of orgs defined under "organizations/peers"
+    orderers:
+      - orderer.cdac.in
+
+    # Required. list of peers from participating orgs
+    peers:
+          
+      peer0.cdachorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.cdachorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      
+      peer0.actsorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.actsorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer0.demoorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.demoorg.cdac.in:
+        endorsingPeer: true 
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true  
+      
+
+      peer0.cdactmorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.cdactmorg.cdac.in:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+#
+# list of participating organizations in this network
+#
+organizations:
+
+  CdachOrg:
+    mspid: CdachMSP
+    peers:
+      - peer0.cdachorg.cdac.in
+      - peer1.cdachorg.cdac.in
+    certificateAuthorities:
+      - ca_peerCdachOrg
+    adminPrivateKey:
+      path: ./hyperledger/artifacts/organizations/CdachOrg/crypto-config/peerOrganizations/cdachorg.cdac.in/users/Admin@cdachorg.cdac.in/msp/keystore/admin_sk
+    signedCert:
+      path: ./hyperledger/artifacts/organizations/CdachOrg/crypto-config/peerOrganizations/cdachorg.cdac.in/users/Admin@cdachorg.cdac.in/msp/signcerts/Admin@cdachorg.cdac.in-cert.pem     
+
+  ActsOrg:
+    mspid: ActsMSP
+    peers:
+      - peer0.actsorg.cdac.in
+      - peer1.actsorg.cdac.in
+    certificateAuthorities:
+      - ca_peerActsOrg
+    adminPrivateKey:
+      path: ./hyperledger/artifacts/organizations/ActsOrg/crypto-config/peerOrganizations/actsorg.cdac.in/users/Admin@actsorg.cdac.in/msp/keystore/admin_sk
+    signedCert:
+      path: ./hyperledger/artifacts/organizations/ActsOrg/crypto-config/peerOrganizations/actsorg.cdac.in/users/Admin@actsorg.cdac.in/msp/signcerts/Admin@actsorg.cdac.in-cert.pem     
+
+  DemoOrg:
+    mspid: DemoMSP
+    peers:
+      - peer0.demoorg.cdac.in
+      - peer1.demoorg.cdac.in
+    certificateAuthorities:
+      - ca_peerDemoOrg
+    adminPrivateKey:
+      path: ./hyperledger/artifacts/organizations/DemoOrg/crypto-config/peerOrganizations/demoorg.cdac.in/users/Admin@demoorg.cdac.in/msp/keystore/admin_sk
+    signedCert:
+      path: ./hyperledger/artifacts/organizations/DemoOrg/crypto-config/peerOrganizations/demoorg.cdac.in/users/Admin@demoorg.cdac.in/msp/signcerts/Admin@demoorg.cdac.in-cert.pem               
+
+  CdactmOrg:
+    mspid: CdactmMSP
+    peers:
+      - peer0.cdactmorg.cdac.in
+      - peer1.cdactmorg.cdac.in
+    certificateAuthorities:
+      - ca_peerCdactmOrg
+    adminPrivateKey:
+      path: ./hyperledger/artifacts/organizations/CdactmOrg/crypto-config/peerOrganizations/cdactmorg.cdac.in/users/Admin@cdactmorg.cdac.in/msp/keystore/admin_sk
+    signedCert:
+      path: ./hyperledger/artifacts/organizations/CdactmOrg/crypto-config/peerOrganizations/cdactmorg.cdac.in/users/Admin@cdactmorg.cdac.in/msp/signcerts/Admin@cdactmorg.cdac.in-cert.pem     
+
+#
+# List of orderers to send transaction and channel create/update requests to. For the time
+# being only one orderer is needed. If more than one is defined, which one get used by the
+# SDK is implementation specific. Consult each SDK's documentation for its handling of orderers.
+#
+orderers:
+  orderer.cdac.in:
+    url: grpcs://localhost:7050
+
+    # these are standard properties defined by the gRPC library
+    # they will be passed in as-is to gRPC client constructor
+    grpcOptions:
+      ssl-target-name-override: orderer.cdac.in
+     # grpc-max-send-message-length: 15
+
+    tlsCACerts:
+      path: ./hyperledger/artifacts/orderer-org/Orderer/crypto-config/ordererOrganizations/cdac.in/orderers/orderer.cdac.in/tls/ca.crt
+
+#
+# List of peers to send various requests to, including endorsement, query
+# and event listener registration.
+#
+peers:
+
+  peer0.cdachorg.cdac.in:
+    url: grpcs://localhost:3051
+    eventUrl: grpcs://localhost:3053
+    grpcOptions:
+      ssl-target-name-override: peer0.cdachorg.cdac.in
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/CdachOrg/crypto-config/peerOrganizations/cdachorg.cdac.in/peers/peer0.cdachorg.cdac.in/tls/ca.crt
+
+  peer1.cdachorg.cdac.in:
+    url: grpcs://localhost:3056
+    eventUrl: grpcs://localhost:3058
+    grpcOptions:
+      ssl-target-name-override: peer1.cdachorg.cdac.in
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/CdachOrg/crypto-config/peerOrganizations/cdachorg.cdac.in/peers/peer1.cdachorg.cdac.in/tls/ca.crt
+
+  peer0.actsorg.cdac.in:
+    url: grpcs://localhost:2051
+    eventUrl: grpcs://localhost:2053
+    grpcOptions:
+      ssl-target-name-override: peer0.actsorg.cdac.in
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/ActsOrg/crypto-config/peerOrganizations/actsorg.cdac.in/peers/peer0.actsorg.cdac.in/tls/ca.crt
+
+  peer1.actsorg.cdac.in:
+    url: grpcs://localhost:2056
+    eventUrl: grpcs://localhost:2058
+    grpcOptions:
+      ssl-target-name-override: peer1.actsorg.cdac.in
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/ActsOrg/crypto-config/peerOrganizations/actsorg.cdac.in/peers/peer1.actsorg.cdac.in/tls/ca.crt  
+
+  peer0.demoorg.cdac.in:
+    url: grpcs://localhost:9051
+    eventUrl: grpcs://localhost:9053
+    grpcOptions:
+      ssl-target-name-override: peer0.demoorg.cdac.in
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/DemoOrg/crypto-config/peerOrganizations/demoorg.cdac.in/peers/peer0.demoorg.cdac.in/tls/ca.crt
+
+  peer1.demoorg.cdac.in:
+    url: grpcs://localhost:9056
+    eventUrl: grpcs://localhost:9058
+    grpcOptions:
+      ssl-target-name-override: peer1.demoorg.cdac.in
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/DemoOrg/crypto-config/peerOrganizations/demoorg.cdac.in/peers/peer1.demoorg.cdac.in/tls/ca.crt        
+#
+# Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
+# certificate management to be done via REST APIs. Application may choose to use a standard
+# Certificate Authority instead of Fabric-CA, in which case this section would not be specified.
+#
+certificateAuthorities:
+
+  ca_peerCdachOrg:
+    url: https://localhost:3054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/CdachOrg/crypto-config/peerOrganizations/cdachorg.cdac.in/ca/ca.cdachorg.cdac.in-cert.pem
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca-cdachorg 
+
+  ca_peerActsOrg:
+    url: https://localhost:2054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/ActsOrg/crypto-config/peerOrganizations/actsorg.cdac.in/ca/ca.actsorg.cdac.in-cert.pem
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca-actsorg 
+
+  ca_peerDemoOrg:
+    url: https://localhost:9054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+      path: ./hyperledger/artifacts/organizations/DemoOrg/crypto-config/peerOrganizations/demoorg.cdac.in/ca/ca.demoorg.cdac.in-cert.pem
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca-demoorg 

@@ -1,0 +1,105 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 32px);
+    width: calc(100% - 32px);
+    /* border: solid 1px lightgray; */
+}
+
+.menu-card-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow-x: auto;
+    margin: 8px 0px 24px 0px;
+}
+
+.menu-card-container>button {
+    margin: 12px;
+    /* border: solid 1px lightgray; */
+    min-width: 156px;
+}
+
+/*
+.menu-card-container>mat-card {
+    margin: 24px;
+    border: solid 1px lightgray;
+    height: 72px;
+    min-width: 128px;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+ .menu-card-container>mat-card>mat-icon {
+    width: 48px;
+    height: 24px;
+    font-size: 2.4em;
+    margin: 8px auto 8px auto;
+}
+
+.menu-card-container>mat-card>span {
+    margin: 16px auto 4px auto;
+    font-size: 1em;
+    color: darkslategray;
+} */
+
+.description {
+    color: darkslategrey;
+    height: calc(100% - 144px);
+}
+
+.description>div {
+    padding: 20px;
+    height: calc(100% - 8px);
+}
+
+.description>div>mat-toolbar {
+    font-size: 16px;
+    justify-content: center;
+    height: 48px;
+    background-color: white;
+}
+
+.folderMode {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.folderModeActions {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    z-index: 1;
+}
+
+.folderModeContent {
+    height: calc(100% - 40px);
+    display: flex;
+    overflow-y: auto;
+}
+
+.uploadInfoGraphicContainer {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    vertical-align: middle;
+    border: dashed 1px lightgray;
+    margin: 20px;
+}
+
+.uploadInfoGraphic {
+    margin: auto auto 0px auto;
+    width: max-content;
+    height: max-content;
+    font-size: 10em;
+    color: aqua;
+}
+
+mat-slide-toggle{
+    font-size: 14px;
+}

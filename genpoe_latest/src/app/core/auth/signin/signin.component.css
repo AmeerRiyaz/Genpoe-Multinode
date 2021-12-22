@@ -1,0 +1,70 @@
+.signin-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.signin-card {
+    text-align: center;
+    width: 302px;
+    text-align: center;
+    padding: 24px;
+    margin: auto;
+    /* border: 1px solid rgb(211, 211, 211) */
+}
+
+.signin-form-container {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.signin-action-area {
+    display: flex;
+    flex-direction: column;
+    padding-top: 16px;
+}
+
+.logo {
+    padding-bottom: 8px;
+    align-self: center;
+    width: 80px;
+}
+
+.captcha-container {
+    display: flex;
+    flex-direction: row
+}
+
+.stat-card {
+    width: 284px;
+    background-color: transparent
+}
+
+.stat-title {
+    color: darkslategray;
+    text-align: center;
+    font-size: 0.9em
+}
+
+.stat-content {
+    text-align: center;
+    font-size: 2em;
+    color: #03a9f4
+}
+
+.mat-button {
+    line-height: 12px;
+}
+
+.signinTypeGroup {
+    width: 100%;
+    height: 32px;
+}
+
+.signinTypeButton {
+    margin-top: -8px; color: darkslategray 
+}

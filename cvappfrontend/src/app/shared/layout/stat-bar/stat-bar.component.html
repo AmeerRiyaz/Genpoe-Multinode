@@ -1,0 +1,38 @@
+<!-- <div class="stat-container">
+    <mat-card class="stat-card mat-elevation-z0" *ngFor="let value of values; index as i">
+        <mat-card-content style="margin-bottom: 0px;">
+            <div class="stat-content">
+                {{value}}
+            </div>
+        </mat-card-content>
+        <mat-divider></mat-divider>
+        <mat-card-actions>
+            <div class="dash-title">
+                {{labels[i]}}
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</div> -->
+
+
+<div class="stat-container">
+    <mat-card class="stat-card mat-elevation-z0" *ngFor="let value of values; index as i">
+        <mat-card-content style="margin-bottom: 0px; display: flex; flex-direction: row">
+            <div class="dash-title " fxFlex='66'>
+                <span class="wrap">{{labels[i]}}</span>
+            </div>
+            <mat-divider
+                [vertical]="true" style="margin: 0px 4px 0px 4px">
+            </mat-divider>
+            <div class="stat-content" fxFlex='34'>
+                {{value}}
+            </div>
+        </mat-card-content>
+        <!-- <mat-divider></mat-divider>
+            <mat-card-actions>
+                <div class="dash-title">
+                    {{labels[i]}}
+                </div>
+            </mat-card-actions> -->
+    </mat-card>
+</div>

@@ -1,0 +1,23 @@
+{
+    "peers": ["peer0.regorg.cdac.in"],
+    "chaincodeName": "pmbct",
+    "vendee": {
+   	 "fullName": "Sirisha Chiliveri",
+   	 "fathersName": "Laxmanna",
+   	 "pan": "BMTPS7334B",
+   	 "aadhaar": "785231459302"
+    },
+    "property": {
+   	 "category": "agricultural",
+   	 "surveyNo": "1238",
+   	 "subDivision": "3b",
+   	 "district": "MahaboobNagar",
+   	 "mandal": "Gadwal",
+   	 "village": "Gadwal",
+   	 "areaExtent": "347",
+   	 "sro": "Rajendra Naga"
+
+    },
+    "poetxId": "0"
+}
+

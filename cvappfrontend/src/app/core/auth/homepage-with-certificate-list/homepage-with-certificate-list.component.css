@@ -1,0 +1,219 @@
+.container {
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+}
+
+.top-div {
+    position: relative;
+    background-color: #008080;
+    width: 100%;
+    height: 42%
+}
+
+.bottom-div {
+    position: relative;
+    width: 100%;
+    height: 58%
+}
+
+.floating-div {
+    /* width: 35%; */
+    width: 352px;
+    height: 105%;
+    max-height: 400px;
+    position: absolute;
+    top: 45%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    /* margin-left: -100px; */
+    z-index: 20;
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+    /* box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 2px 8px 0 rgba(0, 0, 0, 0.19); */
+    background-color: transparent;
+    display: table;
+    border-radius: 6px;
+}
+
+.floating-div-child {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.floating-div-actions {
+    width: 100%;
+    min-width: 300px;
+    height: 32px;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 20;
+}
+
+.logo {
+    padding-top: 8px;
+    background-color: transparent;
+}
+
+.title {
+    background-color: transparent;
+    color: white;
+    /* margin-top: -24px; */
+    font-size: calc(16px + .5vw);
+    /* font-family: sans-serif; */
+    font-weight: bold;
+    padding: 4px;
+    text-align: center;
+    height: 34px;
+}
+
+.recent-certificates-row {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+}
+
+.recent-scrolling-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    width: 100vw;
+    height: 168px;
+}
+
+.certificate {
+    width: 256px;
+    height: 120px;
+    margin: 12px;
+    flex: 0 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    -o-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.wrap {
+    white-space: pre-wrap;
+    /* CSS3 */
+    white-space: -moz-pre-wrap;
+    /* Firefox */
+    white-space: -pre-wrap;
+    /* Opera <7 */
+    white-space: -o-pre-wrap;
+    /* Opera 7 */
+    word-wrap: break-word;
+    /* IE */
+}
+
+.label {
+    width: 150px;
+    color: grey;
+}
+
+.hash {
+    color: darkslategrey;
+}
+
+.stat-card {
+    /* width: 172px; */
+    height: 124px;
+    margin: 8px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    -o-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
+    float: left;
+}
+
+.stat-title {
+    background-color: white;
+    color: darkblue;
+    width: 100%;
+}
+
+.stat-subtitle {
+    margin-left: -12px
+}
+
+.stat-content {
+    text-align: center;
+    font-size: 5em;
+    color: lightgray
+}
+
+.dash-container {
+    /* padding: 8px; */
+    display: flex;
+    flex-direction: column;
+    /* height: 100%; */
+    /* width: auto; */
+    margin: auto;
+    overflow-x: auto;
+}
+
+/* .dash-container:last-child{
+    margin-right: 0px;
+} */
+.dash-card {
+    min-width: 60px;
+    width: 32%;
+    /* margin: 4px; */
+    border: none
+}
+
+.dash-title {
+    /* font-weight: bold; */
+    color: darkslategray;
+    text-align: center;
+    vertical-align: auto
+}
+
+.dash-content {
+    text-align: center;
+    /* font-size: 5em; */
+    color: #03a9f4;
+    height: 48px;
+}
+
+.dash-content-text {
+    text-align: center;
+    font-size: 1em;
+    /* color: #03a9f4; */
+    height: 48px;
+}
+
+.dash-icon {
+    margin-top: -8px;
+    font-size: 40px;
+    height: auto;
+    width: auto;
+}
+
+.float-div {
+    width: 35%;
+    height: 40%;
+    width: 352px;
+    max-height: 400px;
+    position: absolute;
+    top: -8%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 2;
+}
+
+.float-div-container {
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}

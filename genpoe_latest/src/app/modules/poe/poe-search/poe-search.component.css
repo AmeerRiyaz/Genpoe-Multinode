@@ -1,0 +1,64 @@
+.pmredlabel {
+    font-size: 95%;
+    color: brown;
+    margin-left: 8px
+}
+
+.pmgreenlabel {
+    font-size: 95%;
+    color: green;
+    margin-left: 8px
+}
+
+.pmtable {
+    /* display: flex; */
+    font-size: 95%;
+    width: 100%;
+    line-height: 2;
+    /* color: gray; */
+    margin-left: 8px;
+    margin-bottom: 8px;
+    margin-right: 8px;
+}
+
+tr:hover {background-color: #f5f5f5;}
+
+th, td {
+    border-bottom: 0px solid #ddd;
+}
+
+.pmtablerow {
+    text-align: left;
+    width: 100px;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+    padding-top: 0px;
+  }
+  .searchButton{
+    position:absolute;
+    top: -30px;
+    left: -85px;
+
+}
+/* .searchSpinner{
+    position:absolute;
+    top: -30px;
+    left: -70px;
+
+} */
+
+
+.error-container{
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.main-card {
+    height: calc(100% - 32px);
+    overflow-y: auto
+}

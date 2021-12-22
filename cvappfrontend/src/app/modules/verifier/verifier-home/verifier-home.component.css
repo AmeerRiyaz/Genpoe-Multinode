@@ -1,0 +1,28 @@
+.titlebar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: teal;
+  height: 40px;
+  display: flex;
+  width: 100%;
+  color: white;
+  z-index: 2;
+}
+
+nav {
+  height: 38px;
+  position: absolute;
+  margin-top: 32px;
+  left: 0;
+  right: 0;
+  background-color: teal;
+  height: 40px;
+  display: flex;
+  width: 100%;
+  color: white;
+}
+.titlebar-spacer {
+  flex: 1 1 auto;
+}

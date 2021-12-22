@@ -1,0 +1,11 @@
+name: "Land Registration"
+x-type: "hlfv1"
+description: "Land Registration"
+version: "1.0"
+client:
+  organization: RegOrg
+  credentialStore:
+    path: "./hyperledger/crypto-material/certs/fabric-client-kv-RegOrg"
+    cryptoStore:
+      path: "./hyperledger/crypto-material/keystore/fabric-client-kv-RegOrg"
+    wallet: wallet-name

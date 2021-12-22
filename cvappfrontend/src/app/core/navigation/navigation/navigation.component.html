@@ -1,0 +1,104 @@
+<div style="position:absolute;top:0;left:0;right:0;bottom:0;">
+
+  <div>
+
+    <mat-sidenav-container style="height: 100%; background: linear-gradient(to top, whitesmoke, transparent 90%);">
+
+      <!-- SIDEBAR -->
+      <mat-sidenav #drawer [disableClose]="true" *ngIf="isLoggedIn" mode="side" opened class="sidebar mat-elevation-z1">
+
+        <mat-toolbar class="heading mat-elevation-z1" [routerLink]="['/']">
+          <span style="font-size: 14pt">PoE for ACTS Certificates</span>
+        </mat-toolbar>
+
+        <mat-nav-list *ngIf="currentRole == roleList.ADMIN">
+          <a mat-list-item [routerLink]="['/admin/users']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>people</mat-icon> <span mat-line>Users</span>
+          </a>
+        </mat-nav-list>
+
+        <mat-nav-list *ngIf="currentRole == roleList.TC">
+          <a mat-list-item [routerLink]="['/training/certificates']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>subtitles</mat-icon> <span mat-line>Upload Certificates</span>
+          </a>
+          <a mat-list-item [routerLink]="['/training/students']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>cloud_upload</mat-icon> <span mat-line>Upload Student Details</span>
+          </a>
+          <a mat-list-item [routerLink]="['/training/search']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>search</mat-icon> <span mat-line>Search</span>
+          </a>
+        </mat-nav-list>
+
+        <mat-nav-list *ngIf="currentRole == roleList.CH">
+          <a mat-list-item [routerLink]="['/centre/certificates']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>subtitles</mat-icon> <span mat-line>Certificates</span>
+          </a>
+          <a mat-list-item [routerLink]="['/centre/search']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>search</mat-icon> <span mat-line>Search</span>
+          </a>
+        </mat-nav-list>
+
+        <mat-nav-list *ngIf="currentRole == roleList.CC">
+          <a mat-list-item [routerLink]="['/course/certificates']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>subtitles</mat-icon> <span mat-line>Certificates</span>
+          </a>
+          <a mat-list-item [routerLink]="['/course/search']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>search</mat-icon> <span mat-line>Search</span>
+          </a>
+        </mat-nav-list>
+
+        <mat-nav-list *ngIf="currentRole == roleList.PO">
+          <a mat-list-item [routerLink]="['/placement/certificates']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>subtitles</mat-icon> <span mat-line>Certificates</span>
+          </a>
+          <a mat-list-item [routerLink]="['/placement/search']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>search</mat-icon> <span mat-line>Search</span>
+          </a>
+        </mat-nav-list>
+
+        <mat-nav-list *ngIf="currentRole == roleList.STUDENT">
+          <a mat-list-item [routerLink]="['/student/certificates']" [routerLinkActive]="['active']">
+            <mat-icon mat-list-icon>subtitles</mat-icon> <span mat-line>Certificates</span>
+          </a>
+        </mat-nav-list>
+
+      </mat-sidenav>
+
+
+      <!-- MAIN CONTAINER -->
+      <mat-sidenav-content>
+
+        <!-- Title Bar -->
+        <mat-toolbar *ngIf="isLoggedIn" class="mat-elevation-z3"
+          style="background-color: white; height: 42px;color: darkslategray">
+
+          <button mat-icon-button (click)="toggleSidebar()" style="margin-left: -4px">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <!-- <span style="font-size: 14pt">PoE for ACTS Certificates</span> -->
+          <!-- <span style="font-size: 14pt;  margin-right: 16px;">{{title}}</span> -->
+
+          <span style="font-size: 11pt;">{{currentRoute}}</span>
+          <span class="titlebar-spacer"></span>
+          <button mat-button [matMenuTriggerFor]="appMenu">
+            <mat-icon>account_circle</mat-icon>
+            {{currentUser}}
+          </button>
+
+          <mat-menu #appMenu="matMenu" [overlapTrigger]="false" class="profile">
+            <button mat-menu-item (click)="onLogoutClick()">
+              <mat-icon>lock</mat-icon>
+              Logout
+            </button>
+          </mat-menu>
+        </mat-toolbar>
+
+        <div [ngStyle]="{'padding': isLoggedIn ? '11px': '16px'}">
+          <router-outlet></router-outlet>
+        </div>
+
+      </mat-sidenav-content>
+
+    </mat-sidenav-container>
+  </div>
+</div>

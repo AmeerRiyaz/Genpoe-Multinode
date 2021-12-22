@@ -1,0 +1,64 @@
+<div id="summary">
+    <p mat-dialog-title class="wrap">Transaction Details</p>
+    <p mat-dialog-subtitle class="wrap"><span class="label">Transaction ID : </span>{{data.txId}}</p>
+    <p mat-dialog-subtitle class="wrap"><span class="label">Date : </span>{{data.timestamp}}</p>
+    <div class="container" mat-dialog-content>
+        <fieldset>
+            <legend>Details</legend>
+            <table class="table">
+                <tr>
+                    <td class="label">Document Type</td>
+                    <td>{{data.documentType}}</td>
+                </tr>
+                <tr>
+                    <td class="label">File Name</td>
+                    <td>{{data.fileName}}</td>
+                </tr>
+                <!-- <tr>
+                    <td class="label">File Type</td>
+                    <td>{{data.fileType}}</td>
+                </tr> -->
+                <tr>
+                    <td class="label">Centre</td>
+                    <td>{{data.centre}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Course</td>
+                    <td>{{data.course}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Issued By</td>
+                    <td>{{data.issuedByOrg}}</td>
+                </tr>
+                <!-- <tr>
+                    <td class="label">Issuer Name</td>
+                    <td>{{data.issuedByUser}}</td>
+                </tr> -->
+                <tr>
+                    <td class="label">Issued To</td>
+                    <td>{{data.issuedTo}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Batch</td>
+                    <td>{{data.month}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Year</td>
+                    <td>{{data.year}}</td>
+                </tr>
+                <!--                 
+                <tr>
+                    <td class="label"></td>
+                    <td>{{data.}}</td>
+                </tr> 
+            -->
+
+            </table>
+        </fieldset>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div fxFlex></div>
+    <!-- <button mat-button (click)="downloadPdf(data)">Download PDF</button> -->
+    <button mat-button (click)="close()" cdkFocusInitial>Close</button>
+</div>

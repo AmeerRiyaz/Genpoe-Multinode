@@ -1,0 +1,139 @@
+{
+	"id": "b4fd679a-e218-4284-ac44-0be23cf12630",
+	"name": "usersbct",
+	"description": null,
+	"auth": null,
+	"events": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d5b8a965-a2f1-46a8-9adc-fcca9b87ce0f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e38f33bc-55b6-4bb3-86e4-d37085651ead",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variables": [
+		{
+			"key": "url",
+			"value": "http://10.244.1.180:5000",
+			"description": "",
+			"type": "text",
+			"disabled": false
+		}
+	],
+	"order": [
+		"17a82921-2904-4e74-a9f8-369dd753a686",
+		"f088889a-2f7c-4679-a9ff-fbd0a9f15ec9",
+		"b2a8d52e-c7aa-4d22-b562-2631286e2c24",
+		"51124382-ae81-4ab8-93fc-84d5c215a7a7"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "17a82921-2904-4e74-a9f8-369dd753a686",
+			"name": "Register_and_enroll_BCT User_Reg",
+			"url": "{{url}}/usersbct",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"username\":\"testuser\",\n\t\"orgName\":\"RegOrg\",\n\t\"attr\": \"writer\"\n\t\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "51124382-ae81-4ab8-93fc-84d5c215a7a7",
+			"name": "Register_and_enroll_BCT User_Other",
+			"url": "{{url}}/usersbct",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"username\":\"testuser\",\n\t\"orgName\":\"OtherOrg\",\n\t\"attr\": \"reader\"\n\t\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "b2a8d52e-c7aa-4d22-b562-2631286e2c24",
+			"name": "Register_and_enroll_BCT User_Survey",
+			"url": "{{url}}/usersbct",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"username\":\"testuser\",\n\t\"orgName\":\"SurveyOrg\",\n\t\"attr\": \"writer\"\n\t\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "f088889a-2f7c-4679-a9ff-fbd0a9f15ec9",
+			"name": "Register_and_enroll_BCT User_Rev",
+			"url": "{{url}}/usersbct",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"username\":\"testuser\",\n\t\"orgName\":\"RevOrg\",\n\t\"attr\": \"reader\"\n\t\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		}
+	]
+}

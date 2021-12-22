@@ -1,0 +1,88 @@
+<mat-card  style="overflow-y: auto;" class="container-mat-card-org mat-elevation-z0">
+    <mat-card-header>
+        <mat-card-title style="color: grey;">Document List</mat-card-title>
+        <!-- <mat-card-subtitle>PoE List</mat-card-subtitle> -->
+        <div fxFlex></div>
+        <mat-form-field appearance="outline" style=" margin: -8px -4px auto auto;font-size: 14px;">
+                <mat-label>Search in List</mat-label>
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="">
+                <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
+        <!-- <mat-card-subtitle>subtitle</mat-card-subtitle> -->
+    </mat-card-header>
+    <mat-card-content fxFlex style="overflow-y: auto;">
+
+        <!-- ERROR -->
+        <div *ngIf="!getPoeListRequestState.showData" class="error-container">
+            <mat-spinner *ngIf="getPoeListRequestState.requestInProgress" [diameter]="30"></mat-spinner>
+            <div *ngIf="!getPoeListRequestState.requestInProgress && !getPoeListRequestState.showData">
+                <div style="text-align: center;">
+                    <button mat-fab color="primary" (click)="getPoeList()" style="margin: auto;">
+                        <mat-icon>refresh</mat-icon>
+                    </button>
+                </div>
+                <div style="margin: 8px;"></div>
+                <div>
+                    {{getPoeListRequestState.msgToUser}}
+                </div>
+            </div>
+        </div>
+
+        <div [hidden]="!getPoeListRequestState.showData" fxFlex>
+            <!-- <mat-form-field appearance="outline" style="width: 100%; margin-top: -4px">
+                <mat-label>Search in List</mat-label>
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="">
+                <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field> -->
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+                <ng-container cdkColumnDef="documentType">
+                    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Document Type </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.documentType}} </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="recipientName">
+                    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Recipient Name </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.recipientName}} </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="recipientEmail">
+                    <mat-header-cell *cdkHeaderCellDef mat-sort-header> Recipient Email </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row"> {{row.recipientEmail}} </mat-cell>
+                </ng-container>
+
+
+                <!-- <ng-container cdkColumnDef="timestamp">
+            <mat-header-cell *cdkHeaderCellDef mat-sort-header> Date </mat-header-cell>
+            <mat-cell *cdkCellDef="let row"> {{row.regDate | date:'medium'}} </mat-cell>
+          </ng-container> -->
+
+                <ng-container cdkColumnDef="details">
+                    <mat-header-cell *cdkHeaderCellDef [ngClass]="'customWidthClass'"> <span
+                            style="margin: auto;">Details</span> </mat-header-cell>
+                    <mat-cell *cdkCellDef="let row" [ngClass]="'customWidthClass'">
+                        <div style="margin: auto;">
+                            <button mat-icon-button (click)="openDetailsDialog(row)">
+                                <mat-icon color="primary">more</mat-icon>
+                            </button>
+                        </div>
+                    </mat-cell>
+                    <!-- <mat-cell *cdkCellDef="let row">
+                <div style="margin: auto;">  
+              <mat-slide-toggle color="primary" *ngIf="!(row.username === 'Admin')" checked={{row.enable}}
+                    (change)="onChangeUserEnableState($event,row)"></mat-slide-toggle>
+                    </div>
+            </mat-cell> -->
+                </ng-container>
+
+
+                <mat-header-row
+                    *matHeaderRowDef="['documentType','recipientName','recipientEmail','details']; sticky: true">
+                </mat-header-row>
+                <mat-row *matRowDef="let row; columns: ['documentType','recipientName', 'recipientEmail','details'];">
+                </mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

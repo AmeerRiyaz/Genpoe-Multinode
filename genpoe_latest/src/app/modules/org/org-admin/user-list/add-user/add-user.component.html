@@ -1,0 +1,43 @@
+<mat-card class="register mat-elevation-z0">
+
+    <!-- <mat-card-header> -->
+      <mat-card-title>Add user</mat-card-title>
+      <mat-card-subtitle>Fill follwing details to add a new User</mat-card-subtitle>
+    <!-- </mat-card-header> -->
+  
+    <mat-card-content>
+      <form [formGroup]="addUserFormGroup" (ngSubmit)="addUser()">
+        <div class="form-container">
+          <mat-form-field>
+            <input matInput formControlName="userFullName" placeholder="Full Name">
+            <mat-error *ngIf="userFullName.invalid">{{getFullnameValidationMessage()}}</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput matTooltip="Enter email id" formControlName="userEmail" placeholder="Enter email id">
+            <mat-error *ngIf="userEmail.invalid">{{getEmailValidationMessage()}}</mat-error>
+            <!-- <mat-icon matPrefix>email</mat-icon> -->
+          </mat-form-field>
+          <mat-form-field>
+            <input type="password" matInput formControlName="userPasswd" placeholder="Password">
+            <mat-error *ngIf="userPasswd.invalid">{{getPasswordValidationMessage()}}</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Confirm Password</mat-label>
+            <input matInput formControlName="userConfPasswd" [type]="hidePassword ? 'password' : 'text'"
+              placeholder="Confirm your password">
+            <mat-error *ngIf="userConfPasswd.invalid">{{getConfirmPasswordValidationMessage()}}</mat-error>
+            <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
+              'visibility'}}</mat-icon>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <div fxFlex></div>
+      <button mat-button [mat-dialog-close]="false" *ngIf="!addUserRequsetState.requestInProgress" >Cancel</button>
+      <mat-spinner class="register-spinner" *ngIf="addUserRequsetState.requestInProgress" [diameter]="30"></mat-spinner>
+      <button class="register-button" (click)="addUser()" mat-raised-button *ngIf="!addUserRequsetState.requestInProgress"
+        color="primary" type="submit" [disabled]="!addUserFormGroup.valid">ADD</button>
+    </mat-card-actions>
+  </mat-card>

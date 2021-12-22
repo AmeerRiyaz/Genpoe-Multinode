@@ -1,0 +1,181 @@
+<div *ngIf="!displayMessage" class="mat-elevation-z0 signup-card" flex="50">
+    <div style="margin: 16px"></div>
+  <mat-card-header class="title-container">
+    
+    <mat-card-title> <span class="title">Sign Up</span> </mat-card-title>
+
+    <mat-button-toggle-group class="signupTypeGroup" [value]="IND" (change)="signupTypeChanged($event.value)"
+      [disabled]="signupRequestState.requestInProgress">
+      <mat-button-toggle class="signupTypeButton" [fxFlex]="(i == 0) ? 45 : 55" [value]="type"
+        *ngFor="let type of signinType; index as i">
+        {{type}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </mat-card-header>
+  <mat-card-content>
+
+
+
+    <form *ngIf="signupTypeValue == IND" class="signup-form-container-individual" [formGroup]="signupFormGroup"
+      (ngSubmit)="signup()" autocomplete="off">
+
+      <mat-form-field>
+        <mat-label>Enter fullname</mat-label>
+        <input matInput formControlName="fullname" placeholder="Enter fullname">
+        <mat-error *ngIf="fullname.invalid">{{getFullnameValidationMessage()}}</mat-error>
+      </mat-form-field>
+      <!-- <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" placeholder="Enter username">
+        <mat-error *ngIf="username.invalid">{{getUsernameValidationMessage()}}</mat-error>
+      </mat-form-field> -->
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="Enter email">
+        <mat-error *ngIf="email.invalid">{{getEmailValidationMessage()}}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="Enter your password">
+        <mat-error *ngIf="password.invalid">{{getPasswordValidationMessage()}}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Confirm Password</mat-label>
+        <input matInput formControlName="confpass" [type]="hidePassword ? 'password' : 'text'"
+          placeholder="Confirm your password">
+        <mat-error *ngIf="confpass.invalid">{{getConfirmPasswordValidationMessage()}}</mat-error>
+        <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
+          'visibility'}}</mat-icon>
+      </mat-form-field>
+
+      <!-- <mat-form-field>
+        <mat-label>Org Name</mat-label>
+        <input matInput formControlName="orgName" placeholder="Enter org name">
+        <mat-error *ngIf="username.invalid">{{getOrgnameValidationMessage()}}</mat-error>
+      </mat-form-field> -->
+      <div style="margin: auto">
+        <re-captcha formControlName="recaptcha"></re-captcha>
+      </div>
+
+      <div class="signup-action-area">
+        <mat-spinner *ngIf="signupRequestState.requestInProgress" [diameter]="30" style="align-self: center">
+        </mat-spinner>
+        <div>
+          <button mat-button *ngIf="!signupRequestState.requestInProgress" type="button" (click)="closeDialog()"
+            [fxFlex]=48>Cancel</button>
+          <div [fxFlex]=4></div>
+          <button mat-raised-button *ngIf="!signupRequestState.requestInProgress" color="primary" type="submit"
+            [disabled]="signupFormGroup.invalid" [fxFlex]=48>Sign
+            up</button>
+        </div>
+      </div>
+    </form>
+
+
+
+
+    <form *ngIf="signupTypeValue == ORG" class="signup-form-container-organization" [formGroup]="signupOrgFormGroup"
+      (ngSubmit)="signupOrg()">
+
+      <mat-horizontal-stepper formArrayName="orgFormArray" linear>
+        <mat-step label="Org Details" formGroupName="0" [stepControl]="orgFormArray.get([0])">
+          <div style="width: 100%;display: flex;flex-direction: column;">
+            <mat-form-field>
+              <mat-label>Organization Name</mat-label>
+              <input matInput formControlName="userOrgName" placeholder="Enter Organization Name">
+              <mat-error *ngIf="userOrgName.invalid">{{getOrgnameValidationMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Phone Number</mat-label>
+              <input matInput formControlName="orgPhone" placeholder="Enter Organization Phone Number">
+              <mat-error *ngIf="orgPhone.invalid">{{getPhoneNumberValidationMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Organization Email Id</mat-label>
+              <input matInput formControlName="userOrgAdminemail" placeholder="Enter Organization Email Id">
+              <mat-error *ngIf="userOrgAdminemail.invalid">{{getEmailValidationMessage()}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field [fxFlex]="50">
+              <mat-label>Organization ID</mat-label>
+              <input matInput formControlName="userOrgID" placeholder="Enter Organization ID">
+              <mat-error *ngIf="userOrgID.invalid">{{getOrgIdValidationMessage()}}</mat-error>
+            </mat-form-field>
+
+            <div>
+              <div fxFlex></div>
+              <button mat-button *ngIf="!signupRequestState.requestInProgress" type="button"
+                (click)="closeDialog()">Cancel</button>
+              <button mat-button matStepperNext type="button">Next</button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step label="Password" formGroupName="1" [stepControl]="orgFormArray.get([1])">
+          <div style="width: 100%;display: flex;flex-direction: column;">
+            <mat-form-field>
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="userOrgAdminpassword" type="password" placeholder="Enter your password">
+              <mat-error *ngIf="userOrgAdminpassword.invalid">{{getPasswordValidationMessage()}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Confirm Password</mat-label>
+              <input matInput formControlName="userOrgAdminconfpass" [type]="hidePassword ? 'password' : 'text'"
+                placeholder="Confirm your password">
+              <mat-error *ngIf="userOrgAdminconfpass.invalid">{{getConfirmPasswordValidationMessage()}}</mat-error>
+              <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
+                  'visibility'}}</mat-icon>
+            </mat-form-field>
+
+            <div style="margin: auto">
+              <re-captcha formControlName="recaptcha"></re-captcha>
+            </div>
+
+
+            <div class="signup-action-area" style="margin-top: 20px;">
+              <mat-spinner *ngIf="signupRequestState.requestInProgress" [diameter]="30" style="align-self: center">
+              </mat-spinner>
+              <div>
+                <div fxFlex></div>
+                <button mat-button *ngIf="!signupRequestState.requestInProgress" type="button"
+                (click)="closeDialog()">Cancel</button>
+                <button mat-button matStepperPrevious type="button"
+                  *ngIf="!signupRequestState.requestInProgress">Back</button>
+                <button mat-raised-button *ngIf="!signupRequestState.requestInProgress" color="primary" type="submit"
+                  [disabled]="signupOrgFormGroup.invalid" [fxFlex]=48>Sign up</button>
+                <div [fxFlex]=4></div>
+
+              </div>
+            </div>
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+
+
+
+
+
+
+
+
+
+
+
+
+    </form>
+  </mat-card-content>
+</div>
+
+<div *ngIf="displayMessage" class="signup-card mat-elevation-z0">
+
+  <mat-card-header>
+    <mat-card-title style="margin-left: -12px">Registration Successful</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    {{signupResponse.message}}
+  </mat-card-content>
+  <mat-card-actions>
+    <div fxFlex></div>
+    <button mat-raised-button color="primary" (click)="closeDialog()">Close</button>
+  </mat-card-actions>
+</div>

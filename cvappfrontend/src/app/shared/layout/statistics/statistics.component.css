@@ -1,0 +1,28 @@
+.stat-container{
+    /* padding: 4px 4px 0px 4px; */
+    display: flex;
+    flex-direction: row;
+    /* height: 100%; */
+    width: 100%;
+    overflow-x: auto;   
+}
+.stat-card {
+    /* height: 124px; */
+    min-width: 90px;
+    width: 49%;
+    /* margin-left: 4px;
+    margin-right: 4px; */
+    /* float: left; */
+    margin: 5px;
+    /* border: 1px solid #dadce0; */
+}
+.stat-title{
+    /* font-weight: bold; */
+    color: darkslategray;
+    text-align: center
+}
+.stat-content{
+    text-align: center;
+    font-size: 3em;
+    color: #03a9f4
+}

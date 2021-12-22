@@ -1,0 +1,233 @@
+<mat-card class="mat-elevation-z0 container" *ngIf="hideForDev">
+
+  <!-- <div fxFlex></div> -->
+  <div *ngIf="!isFileSelected;" style="display: flex; flex-direction: column; height: 100%;">
+    <mat-card-header>
+      <mat-card-title style="color: grey;">Upload Documents for PoE in Blockchain</mat-card-title>
+    </mat-card-header>
+
+    <div class="uploadInfoGraphicContainer" [fxFlex]="100">
+      <div style="display: flex; " [fxFlex]=55>
+        <mat-icon class="uploadInfoGraphic">
+          cloud_upload</mat-icon>
+      </div>
+
+      <div class="menu-card-container">
+
+        <button mat-raised-button color="primary" (click)="resetFileSelection(); splitMode=false; fileInput.click()">
+          <mat-icon style="margin-right: 12px;">image</mat-icon> Select File
+        </button>
+        <button mat-raised-button color="primary"
+          (click)="resetFileSelection(); folderUpload=true; folderInput.click()">
+          <mat-icon style="margin-right: 12px;">collections</mat-icon> Select Folder
+        </button>
+
+        <!-- <mat-card [fxFlex]=20 [ngClass]="isHovering[0] ? 'mat-elevation-z4' : 'mat-elevation-z2'"
+          (mouseenter)="mouseHovering(0)" (mouseleave)="mouseLeaving(0)" (click)="splitMode=false; fileInput.click()">
+          <mat-icon color="primary">image</mat-icon>
+          <span>Upload File</span>
+        </mat-card> -->
+
+        <!-- <mat-card [fxFlex]=30 [ngClass]="isHovering[1] ? 'mat-elevation-z4' : 'mat-elevation-z2'"
+        (mouseenter)="mouseHovering(1)" (mouseleave)="mouseLeaving(1)" (click)="splitMode=true; fileInput.click()">
+        <mat-icon color="primary">collections</mat-icon>
+        <span>Upload Multipage File</span>
+      </mat-card> -->
+
+        <!-- <mat-card [fxFlex]=20 [ngClass]="isHovering[2] ? 'mat-elevation-z4' : 'mat-elevation-z2'"
+          (mouseenter)="mouseHovering(2)" (mouseleave)="mouseLeaving(2)"
+          (click)="folderUpload=true; folderInput.click()">
+          <mat-icon color="primary">folder</mat-icon>
+          <span>Upload Folder</span>
+        </mat-card> -->
+      </div>
+      <div *ngIf="isFileSelectionInProgress">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+    </div>
+    <!-- <mat-divider></mat-divider> -->
+
+    <!-- <div class="description">
+      <div [fxFlex]=33>
+        <mat-toolbar>
+          <span>Upload File</span>
+        </mat-toolbar>
+        <mat-list>
+          <mat-list-item>Description about upload file</mat-list-item>
+        </mat-list>
+      </div>
+      
+      <div [fxFlex]=33>
+        <mat-toolbar>
+          <span>Upload Multipage File</span>
+        </mat-toolbar>
+        <mat-list>
+          <mat-list-item>Description about upload multipage file</mat-list-item>
+        </mat-list>
+      </div>
+      
+      <div [fxFlex]=33>
+        <mat-toolbar>
+          <span>Upload Folder</span>
+        </mat-toolbar>
+        <mat-list>
+          <mat-list-item>Description about upload folder</mat-list-item>
+        </mat-list>
+      </div> 
+    </div>-->
+    <form [formGroup]="uploadForm">
+      <input [hidden]="true" type="file" formControlName="folderSelection" (change)="fileChange($event)"
+        accept="application/pdf" webkitdirectory mozdirectory msdirectory odirectory directory multiple #folderInput>
+      <input [hidden]="true" type="file" formControlName="fileSelection" (change)="fileChange($event)"
+        accept=".pdf,.png,.jpg,.jpeg,.bmp" #fileInput>
+    </form>
+  </div>
+
+
+
+
+  <!-- UPLOAD UI BASED ON TYPE SINGLE/MULTI -->
+  <div *ngIf="isFileSelected;" style="height: 100%;width: 100%;">
+
+
+    <!-- SINGLE FILE -->
+    <div style="display: flex;flex-direction: column;height: 100%; width: 100%; display: flex;align-items: center;"
+      *ngIf="!folderUpload && !splitMode">
+      <div fxFlex>
+        <div style="display: flex; flex-direction: column; margin: auto; height: 100%;">
+
+
+          <app-transaction [file]="selectedFiles" #transaction style="margin: auto;"
+            [hidden]="recordTransactionRequest.success"></app-transaction>
+
+          <app-transaction-success-result
+            *ngIf="recordTransactionRequest.requestProcessed && recordTransactionRequest.success"
+            [result]="poeTransactionResponse" #transactionResult style="margin: auto;">
+          </app-transaction-success-result>
+
+
+          <!-- UPLOAD BUTTON -->
+          <button
+            *ngIf="isFileSelected && !recordTransactionRequest.requestInProgress && !recordTransactionRequest.success"
+            [disabled]="!transaction.recordTransactionFormGroup.valid" color="primary" style="margin: auto;" mat-fab
+            (click)="recordTransaction()">
+            <mat-icon>cloud_upload</mat-icon>
+          </button>
+
+          <!-- BACK BUTTON -->
+          <button *ngIf="recordTransactionRequest.requestProcessed && recordTransactionRequest.success" color="primary"
+            style="margin: auto;" mat-fab (click)="resetFileSelection()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+
+          <!-- CANCEL BUTTON -->
+          <button
+            *ngIf="isFileSelected && !recordTransactionRequest.requestInProgress && !recordTransactionRequest.success"
+            style="margin: auto auto 0px auto;" mat-button (click)="resetFileSelection()">
+            <mat-icon>arrow_back</mat-icon> Cancel
+          </button>
+
+          <mat-spinner *ngIf="isFileSelected && recordTransactionRequest.requestInProgress" [diameter]=48
+            style="margin: auto;"></mat-spinner>
+
+
+
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- SPLIT MODE -->
+    <div style="display: flex;flex-direction: column;height: 100%; width: 100%; display: flex;align-items: center;"
+      *ngIf="!folderUpload && splitMode">
+      <app-transaction-multi-file [files]="selectedFiles"></app-transaction-multi-file>
+    </div>
+
+
+
+    <!-- FOLDER MODE -->
+    <div class="folderMode" *ngIf="folderUpload">
+
+
+      <div class="folderModeActions">
+
+        <!-- Cancel BUTTON -->
+        <button
+          *ngIf="isFileSelected && !recordTransactionRequest.requestInProgress && !recordTransactionRequest.success"
+          style="margin: auto auto 8px 8px;" mat-button (click)="resetFileSelection()">
+          <mat-icon>arrow_back</mat-icon> Cancel
+        </button>
+
+        <!-- BACK BUTTON -->
+        <button *ngIf="recordTransactionRequest.requestProcessed && recordTransactionRequest.success" color="primary"
+          style="margin: 8px;" mat-button (click)="resetFileSelection()">
+          <mat-icon>arrow_back</mat-icon> Back
+        </button>
+
+        <!-- <button mat-icon-button>
+          <mat-icon color='primary'>help</mat-icon>
+        </button> -->
+
+
+        <mat-card-subtitle style="margin: auto;">Total Files :{{selectedFiles.length}}</mat-card-subtitle>
+
+        <div style="margin: 8px;"></div>
+        <mat-slide-toggle color="primary" [(ngModel)]="allowStorage">Store Files</mat-slide-toggle>
+        <div style="margin: 4px;"></div>
+        <mat-slide-toggle color="primary" [(ngModel)]="sendMail">Send Mail</mat-slide-toggle>
+
+        <div fxFlex></div>
+
+        <mat-card-subtitle *ngIf="recordTransactionRequest.requestProcessed && recordTransactionRequest.success"
+          style="margin: auto;">
+          {{getSuccessRequestCount()}} out of {{poeTransactionResponse.length}} Transactions Successful.
+        </mat-card-subtitle>
+
+        <input [hidden]="true" type="file" (change)="excelFileSelected($event)" accept=".xlsx" #excelInput>
+
+        <!-- EXCEL -->
+        <button
+          *ngIf="isFileSelected && !recordTransactionRequest.requestInProgress && !recordTransactionRequest.success && !parsedDataFromExcel.length"
+          mat-button style="margin: 8px;" matTooltip="Following forms will be autofilled based on xls file data"
+          (click)="excelInput.click()">
+          Choose Excel File
+        </button>
+        <mat-chip-list style="margin: 10px;">
+          <mat-chip removable="true"
+            *ngIf="parsedDataFromExcel.length && !recordTransactionRequest.success &&  !recordTransactionRequest.requestInProgress"
+            (removed)="removeExcelFile()">
+            {{execlFile.name}}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+
+        <button
+          *ngIf="isFileSelected && !recordTransactionRequest.requestInProgress && !recordTransactionRequest.success"
+          [disabled]="!transactionFolder.recordTransactionFormArray.valid" color="primary"
+          style="margin: auto 32px 8px auto;" mat-raised-button (click)="recordTransaction()">
+          <mat-icon>cloud_upload</mat-icon> Record
+        </button>
+
+
+        <mat-spinner *ngIf="isFileSelected && recordTransactionRequest.requestInProgress" [diameter]=32
+          style="margin: auto;"></mat-spinner>
+
+      </div>
+
+      <div class="folderModeContent">
+        <app-transaction-multi-file #transactionFolder [files]="selectedFiles" style="width: 100%; z-index: 0;">
+        </app-transaction-multi-file>
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+</mat-card>

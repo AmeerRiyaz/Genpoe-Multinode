@@ -1,0 +1,25 @@
+mat-card {
+    height: calc(100% - 32px);
+}
+
+.action-area {
+    /* text-align: center; */
+    margin: 0px auto;
+    width: calc(100% - 32vw);
+    min-width: 520px;
+}
+
+mat-form-field {
+    margin-right: 8px;
+    /* width: auto; */
+    width: 192px;
+}
+
+.ac-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: white;
+    height: 100%;
+    overflow: auto
+}

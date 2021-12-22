@@ -1,0 +1,1695 @@
+const mongoose = require('mongoose');
+var install = require('../../hyperledger/install-chaincode.js');
+var instantiate = require('../../hyperledger/instantiate-chaincode.js');
+var invoke = require('../../hyperledger/poe/invoke-transaction.js');
+var query = require('../../hyperledger/poe/query.js');
+const proofofex = require('../../models/training/certificate.model');
+var log4js = require('log4js');
+var logger = log4js.getLogger('poechaincode.controller');
+var validator = require('validator');
+const validFilename = require('valid-filename');
+const User = require('../../models/bctuser.model.js');
+const io = require('socket.io-client');
+var rtelib0 = require('../../rtelib/rte-lib');
+var rtconfig = require('../../config/rtconfig');
+//var serverIP = 'http://10.244.0.48:3000';
+const socket = io(rtconfig.rteserverIP + '/blockchain-nsp');
+var rtelib = new rtelib0(socket);
+const nodemailer = require("nodemailer");
+const fs = require('fs');
+const Student = require('../../models/training/student.model.js');
+var rabbitq = require('../rabbitqsender');
+var pdf = require('html-pdf');
+var ipfsClient = require('../ipfs_client');
+var zip = require('express-zip');
+var phantom = require('phantom');
+const PDFDocument = require('pdfkit');
+const qrcode = require('qrcode');
+
+//var ipfsAPI = require('ipfs-api')
+var ipfsAPI = require('ipfs-http-client');
+async = require("async");
+
+var ipfs;
+//ipfs = ipfsAPI({host:'10.244.1.233', port:'5001', protocol: 'http'})
+function cts() {
+    var current = new Date();
+    var curr_ts = current.toString();
+    return curr_ts;
+}
+
+function getErrorMessage(field) {
+    var response = {
+        status: "Failed",
+        message: field,
+        result: ""
+    };
+    rtelib.raiseEvent('blockchain', 'poeSearch', {
+        ts: cts(),
+        msg: 'Query failed due to ' + field
+    });
+    return response;
+}
+// Invoke transaction on chaincode on target peers
+exports.invoke = async (req, res) => {
+    logger.debug('==================== INVOKE ON CHAINCODE ==================');
+
+   // logger.debug(req.body);
+    var data = req.body;
+    console.log(data.length);
+    var peers = "peer0.actsorg.cdac.in";
+    /* if(req.body.peers){
+          peers = req.body.peers;
+     }
+     else
+      peers = "";*/
+    //    var peers = req.body.peers;
+    //var chaincodeName = req.body.chaincodeName;
+    //var channelName = req.params.channelName;
+    var chaincodeName = "cdacpoe";
+    var channelName = "cdacpoechannel";
+
+    var fcn = "recordProofOfEx";
+    if (!chaincodeName) {
+        res.json(getErrorMessage('\'chaincodeName\''));
+        return;
+    }
+    if (!channelName) {
+        res.json(getErrorMessage('\'channelName\''));
+        return;
+    }
+
+    var re1 = new RegExp('^([a-zA-Z/]+)$');
+    var re2 = new RegExp('^([a-zA-Z]+)$');
+    var re3 = new RegExp('^([a-zA-Z0-9 _-]+)$');
+    let resultList = [];
+    var done = false;
+    // if(resultList != []){
+    // async.each( data1,function (data,callback) {
+    var i = 0;
+    for (i; i < data.length; i++) {
+
+        var error_message = null;
+        console.log("i ====", i)
+        // console.log(data);
+        //   if (done == false) {
+        //
+
+        //for(var i =0 ;i< data.length; i++){
+
+        //if(data.done == true) {
+
+        var fileName = data[i].fileName;
+        // doing for removing duplications like filename(1).pdf
+        var file = fileName;
+        var fileext = file.split('.');
+        var name = fileext[0].split('(');
+        fileName = name[0] + "." + fileext[1];
+        var fileType = data[i].fileType;
+        console.log(fileType);
+        if (re1.test(fileType)) {
+            console.log("filetype Valid");
+        } else {
+            console.log("Invalid");
+            res.json(getErrorMessage("Invalid request"));
+            return;
+        }
+        fileType = fileType.split('/').pop();
+        console.log(fileType);
+        console.log(fileext[1]);
+        if (fileext[1] == 'jpg' || fileext[1] == 'png' ||
+            fileext[1] == 'jpeg' || fileext[1] == 'pdf' ||
+            fileext[1] == 'doc' || fileext[1] == 'docx' ||
+            fileext[1] == 'ppt' || fileext[1] == 'pptx') {
+
+            var documentType = data[i].documentType;
+            if (re2.test(documentType)) {
+                console.log("document type Valid");
+            } else {
+                console.log("Invalid");
+                res.json(getErrorMessage("Invalid request"));
+                return;
+            }
+            var sha256Hash = data[i].sha256Hash;
+            var sha1Hash = data[i].sha1Hash;
+            //var issuedByOrg = req.body.issuedByOrg;
+            //var issuedByUser = req.body.issuedByUser;
+            var issuedByOrg = req.orgname;
+            var issuedByUser = req.username;
+            var issuedTo = data[i].issuedTo;
+            var content = data[i].base64;
+            if (re3.test(issuedTo)) {
+                console.log("issued To Valid");
+            } else {
+                console.log("Invalid");
+                res.json(getErrorMessage("Invalid request"));
+                return;
+            }
+
+            var rollNo = data[i].issuedTo;
+            //checking the rollNo validation
+            Student.findOne({
+                "rollNo": rollNo
+            }, function (err, student) {
+                if (student) {
+                    console.log("student rollNo exist");
+                } else if (student === null || err) {
+                    res.json(getErrorMessage('\'Roll No not matched\''));
+                    return;
+                }
+            });
+            var year = rollNo.substr(0, 2);
+            year = "20" + year;
+
+            var month = rollNo.substr(2, 2);
+            if (month === "02")
+                month = "February"
+            if (month === "08")
+                month = "August"
+            var centre = rollNo.substr(4, 3);
+            if (centre === "503")
+                centre = "C-DAC Hyderabad"
+            var courseid = rollNo.substr(7, 2);
+            var No = rollNo.substr(9, 3);
+
+            if (courseid === '20')
+                courseid = "DAC";
+            if (courseid === '22')
+                courseid = "DSSD";
+            if (courseid === '30')
+                courseid = "DESD"
+            if (courseid === '23')
+                courseid = "DITISS"
+
+            var backLink = "";
+            if (!validator.isHash(sha256Hash, 'sha256')) {
+                res.json(getErrorMessage("Invalid request"));
+                return;
+            }
+            if (!validator.isHash(sha1Hash, 'sha1')) {
+                res.json(getErrorMessage("Invalid request"));
+                return;
+            }
+            /* if(!validFilename(fileName)){
+                 res.json(getErrorMessage("Invalid request"));
+                 return;
+             }*/
+            var args = [
+                sha256Hash,
+                sha1Hash,
+                fileName,
+                fileType,
+                documentType,
+                issuedTo,
+                backLink
+            ]
+            var regtime = new Date();
+           // logger.debug("regtime", regtime);
+            let cert = new proofofex({
+                fileName: fileName,
+                fileType: fileType,
+                documentType: documentType,
+                sha256Hash: sha256Hash,
+                sha1Hash: sha1Hash,
+                issuedByOrg: issuedByOrg,
+                issuedByUser: issuedByUser,
+                issuedTo: issuedTo,
+                year: year,
+                month: month,
+                course: courseid,
+                centre: centre,
+                txstatus: "Pending",
+                txId: "",
+                timestamp: regtime
+
+            });
+
+            // var content = data[i].base64;
+            // var decode_buf = new Buffer(content, 'base64');
+            //var localfile = process.cwd()+'/certificates/'+fileName;
+           
+
+    //  var receipt_html = '<html><body>';
+
+          
+            //  receipt_html +='<img src="file:///home/cdac/Downloads/qrcode.png" width="80",alt="cdac" height="80" align="left">';
+          //  receipt_html +='<text>'+Buffer.from(content,'base64')+'</text>';
+            //receipt_html+= '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAO/SURBVO3BQY4kRwIDQXqg/v9l3znowFMAiaxuaRY0wz8y84+TmXIyU05myslMOZkpJzPlZKaczJSTmXIyU05myslMOZkpJzPlZKZ88hKQ36TmBsgTahqQJ9TcAPlNat44mSknM+VkpnzyZWq+CcgNkKbmCSA3ahqQN9R8E5BvOpkpJzPlZKZ88sOAPKHmCTUNSFPTgNyo+U1AnlDzk05myslMOZkpn/yfA9LUNCA3QJqa/2cnM+VkppzMlE/+ckBu1DwB5AbIjZq/2clMOZkpJzPlkx+m5iepaUAakKamqbkBcqPmDTX/JScz5WSmnMyUT74MyG8C0tQ0IDdAmpobNQ1IU3MD5L/sZKaczJSTmfLJS2r+TWoakCfUNCBNzRtq/iYnM+VkppzMlE9eAtLUNCBNTQPS1DQgTc2NmgbkBkhT04D8JCBNzQ2QpuabTmbKyUw5mSn4R34QkBs1TwBpat4A0tQ8AeQJNd8EpKl542SmnMyUk5nyyUtAfhKQpuYGyI2apqYBaWpu1NwAuQHS1DQgv+lkppzMlJOZgn/kFwFpahqQpqYBaWoakKbmBkhTcwOkqflNQJqabzqZKScz5WSmfPISkCfUNCBNTQNyA6SpaUCamm8C8oSaGyBNzQ2QpuaNk5lyMlNOZsonL6l5AsgNkKamAWlqngByA6SpaWoakN+kpgH5ppOZcjJTTmbKJy8BaWoakKbmCSBNTQPS1LyhpgFpapqaGyANSFPT1DQgv+lkppzMlJOZ8slLahqQpuYGyI2aJ4A0NTdAGpAbIE3NNwFpahqQpuabTmbKyUw5mSmfvASkqbkB0tQ0IA1IU3OjpgG5UXMDpKlpQN4A8oSan3QyU05myslMwT/yFwPS1NwAaWpugDyh5gkg36TmjZOZcjJTTmbKJy8B+U1qmpobIE3NDZCmpgF5AkhTc6PmBshPOpkpJzPlZKZ88mVqvgnIE0CamgakqWlqbtQ0IDdqngDS1DQ1Dcg3ncyUk5lyMlM++WFAnlDzBJCm5kZNA9LUvAHkDTX/ppOZcjJTTmbKJ385NTdAngDS1DQgTc0TQJ4A0tQ0Nd90MlNOZsrJTPnkLwekqXlDTQPS1PwkIE3NDZCm5o2TmXIyU05myic/TM1PUtOANDU3QBqQGyBPqGlqGpAngDQ133QyU05myslM+eTLgPwmIE8AaWpugHwTkKbmDSBNzRsnM+VkppzMFPwjM/84mSknM+VkppzMlJOZcjJTTmbKyUw5mSknM+VkppzMlJOZcjJTTmbK/wA9Uq0xJJiC3gAAAABJRU5ErkJggg==" width="80",alt="cdac" height="80" align="left">'
+                
+                // receipt_html += '</body>'
+                // receipt_html += '</html>';
+                // var options = {
+
+                //     // Export options
+                //     "directory": "/tmp", // The directory the file gets written into if not using .toFile(filename, callback). default: '/tmp'
+            
+                //     "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+                //     "orientation": "portrait", // portrait or landscape
+            
+                    // Page options
+            
+                    /* "border": {
+                        "top": "2in", // default is 0, units: mm, cm, in, px
+                        "right": "1in",
+                        "bottom": "2in",
+                        "left": "1.5in"
+                    }, */
+            
+                  //  paginationOffset: 1, // Override the initial pagination number
+                   /*  "header": {
+                        "height": "15mm",
+                        "contents": '<b><div style="text-align: center; style="color:blue">PoE Receipt</div></b>'
+                    }, */
+                    /* "footer": {
+                        "height": "28mm",
+                        "contents": {
+                            first: 'Cover page',
+                            2: 'Second page', // Any page number is working. 1-based index
+                            default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+                            last: 'Last Page'
+                        }
+                    }, */
+            
+            
+                    // Rendering options
+                  //  "base": "file:///home/www/your-asset-path", // Base path that's used to load files (images, css, js) when they aren't referenced using a host
+            
+                    // Zooming option, can be used to scale images if `options.type` is not pdf
+                   // "zoomFactor": "1", // default is 1
+            
+                    // File options
+                   // "type": "pdf", // allowed file types: png, jpeg, pdf
+                  //  "quality": "75", // only used for types png & jpeg
+            
+                    // Script options
+                    // "phantomPath": "./node_modules/phantomjs/bin/phantomjs", // PhantomJS binary which should get downloaded automatically
+                    // "phantomArgs": [], // array of strings used as phantomjs args e.g. ["--ignore-ssl-errors=yes"]
+                    // "script": '/url',           // Absolute path to a custom phantomjs script, use the file in lib/scripts as example
+                    // "timeout": 30000,           // Timeout that will cancel phantomjs, in milliseconds
+            
+                    // Time we should wait after window load
+                    // accepted values are 'manual', some delay in milliseconds or undefined to wait for a render event
+            //        "renderDelay": 1000,
+            
+            
+            
+            //     };
+            // pdf.create(receipt_html, options).toFile(process.cwd() + '/certificates/' + rollNo + "-" + documentType + "." + fileType, function (err, res1) {
+            //     if (err) return console.log(err);
+            //     console.log(res1);
+            // });
+        var localfile = process.cwd() + '/certificates/' + rollNo + "-" + documentType + "." + fileType;
+        //var localfile = process.cwd() + '/certificates/' + rollNo + "-" + documentType;
+            console.log(localfile);
+          //  fs.writeFileSync(localfile, content);
+            //save the file in PoS
+            // Save a new asset/property
+            cert.save(async (err, newPoe) => {
+                if (err) {
+                    error_message = err.message;
+                    // console.log(error_message);
+                    //res.json("Error creating new asset: " + err.message);
+                    // return;
+                } else {
+                    logger.debug("Asset saved in db successfully");
+                    res.statusCode = 200;
+                    res.message = "Asset created successfully";
+                }
+            });
+            // }
+            if (!error_message) {
+                let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+                console.log(message);
+                if (message.status === "Success") {
+                    //var timestamp = new Date();
+                    var ts = new Date();
+                    var timestamp = ts.getFullYear() + '-' + ts.getMonth() + 1 + '-' + ts.getDate() + ',' + ts.getHours() + ':' +
+                        ts.getMinutes() + ":" + ts.getSeconds();
+
+                    
+
+                            //  console.log(posHash + " -------------");
+                           // posStatus = true;
+                           // var posHash= "5768gjhjh";
+
+
+
+                            var email;
+                            var name;
+
+                            //sending mail to  student
+                            Student.findOne({
+                                "rollNo": rollNo
+                            }, function (err, student) {
+                                if (student) {
+                                    email = student.email;
+                                    rollNo = student.rollNo;
+                                    name = student.name;
+                                    
+                                       // console.log(emailStatus);
+                                        proofofex.update({
+                                                "sha256Hash": sha256Hash
+                                            }, {
+                                                $set: {
+                                                    "txstatus": "Success",
+                                                    "txId": message.txId,
+                                                    "timestamp": timestamp
+                                                   
+                                                }
+                                            }, {
+                                                "multi": true
+                                            },
+                                            function (err, rowsUpdated) {
+                                                if (err) console.log(err);
+                                                console.log("row updated");
+                                            });
+                                        proofofex.findOne({
+                                            "sha256Hash": sha256Hash
+                                        }, function (err, poe1) {
+                                            // logger.debug(poe1);
+
+                                            /* rtelib.raiseEvent('blockchain', 'poe', {
+                                                ts: cts(),
+                                                msg: sha256Hash + ' uploaded in PoE'
+                                            }); */
+                                            //TODO mail certificate to student
+                                            /* Student.findOne({"rollNo":rollNo},async function(err,student){
+                                                console.log(student.email);
+                                                var qdata = student.email+";"+";"+localfile; */
+                                            //rabbitq.sendData(qdata);                           
+                                            console.log("updated");
+                                            //  done = true;
+                                            resultList.push({
+                                                "fileName": fileName,
+                                                "sha256Hash": sha256Hash,
+                                                "status": "success",
+                                                message: poe1
+
+                                            });
+                                            ipfsClient.storeFile(localfile,sha256Hash);
+
+                                            sendmailToStudent(documentType, sha256Hash,localfile, email, rollNo, name, centre);
+                                            console.log(resultList + "i value" + i);
+                                            console.log("i = " + i + " result length = " + resultList.length);
+                                            if (data.length == resultList.length) {
+                                                console.log(resultList)
+                                                res.send(resultList);
+                                            }
+                                            //return;
+
+
+                                            //  res.send(resultList);
+
+                                            // console.log(resultList);
+                                            // })
+                                            //   
+                                            /*  res.json({
+                                                 status: "Success",
+                                                 message: "",
+                                                 result: poe1
+                                             }); */
+                                            //     });
+                                            // });
+
+                                            //
+
+                                        });
+
+                                   // }); //mail
+
+                                }
+                            });
+                            // console.log(student.email);
+                            // var qdata = student.email + ";" + ";" + localfile;
+                            //  var qdata = email + ";" + ";" + localfile;
+
+                       
+                          
+                       
+
+
+                } else {
+                    rtelib.raiseEvent('blockchain', 'poe', {
+                        ts: cts(),
+                        msg: fileName + ' already exist'
+                    });
+                    resultList.push({
+                        "fileName": fileName,
+                        "sha256Hash": sha256Hash,
+                        "status": "Failed",
+                        "message": fileName + " already exist"
+                    });
+                    console.log("i = " + i + " result length = " + resultList.length);
+                    if (data.length == resultList.length) {
+                        console.log(resultList)
+                        res.send(resultList);
+                    }
+                    //return;
+                    /* res.send({
+                        status: "Failed",
+                        message: fileName + " already exist",
+                        result: ""
+                    }); */
+
+                }
+            } else {
+                resultList.push({
+                    "fileName": fileName,
+                    "status": "Failed",
+                    "message": "Incorrect file"
+                });
+                console.log("i = " + i + " result length = " + resultList.length);
+                if (data.length == resultList.length) {
+                    console.log(resultList)
+                    res.send(resultList);
+                }
+                //  res.json(getErrorMessage('\'Incorrect file\''));
+                // return;
+            }
+        }
+
+        // callback();console.log(resultList)
+
+
+    }
+
+
+
+    // }
+    // console.log("done:::"+done)
+    //console.log(resultList);
+
+
+    // }
+    // done = true;
+    //}
+    // Promise.all(resultList).then((result) => res.send(result)).catch((err)=>res.send(err));
+
+
+
+
+};
+
+// Query a transaction by hash of the file
+exports.querybyrollNo = async (req, res) => {
+
+    logger.debug('==================== INVOKE ON CHAINCODE BY HASH==================');
+
+
+    var peers = "peer0.actsorg.cdac.in";
+    /* if (req.body.peers) {
+        peers = req.body.peers;
+    } else
+        peers = ""; */
+    //    var peers = req.body.peers;
+    var chaincodeName = "cdacpoe";
+    var channelName = "cdacpoechannel";
+    var fcn = "queryProofOfExByTxid";
+
+
+    var rollNo = req.body.rollNo;
+    /*  var re2 = new RegExp('^([a-zA-Z0-9]+)$');
+     if (re2.test(sha256Hash)) {
+         console.log("Valid");
+     } else {
+         console.log("Invalid");
+         res.json(getErrorMessage("Invalid request"));
+         return;
+     } */
+    //var issuedByOrg = req.body.issuedByOrg;
+    //var issuedByUser = req.body.issuedByUser;
+
+    var issuedByOrg = req.orgname;
+    var issuedByUser = req.username;
+
+ //   logger.debug(req.body);
+   // logger.debug('channelName  : ' + channelName);
+   // logger.debug('chaincodeName : ' + chaincodeName);
+    //logger.debug('fcn  : ' + fcn);
+
+    if (!chaincodeName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    if (!channelName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    var finalresult = [];
+
+    proofofex.find({
+        issuedTo: rollNo
+    }, {
+        txId: 1,
+        _id: 0
+    }, async function (err, records) {
+        console.log(records);
+        console.log(records.length);
+        if (records.length > 0) {
+            for (var i = 0; i < records.length; i++) {
+
+                var txId = records[i].txId
+                var re2 = new RegExp('^([a-zA-Z0-9]+)$');
+                if (re2.test(txId)) {
+                    console.log("Valid");
+                    var args = [
+                        records[i].txId
+                    ]
+    
+                    // let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+                    let message = await query.queryChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+    
+                   // logger.debug("MEssage---------" + JSON.stringify(message));
+    
+    
+                    if (message.status === "Success") {
+                        if (message.message.length != 0) {
+                            var result = JSON.parse(message.message.toString());
+                         //   logger.debug(result);
+                           // logger.debug('found ', result[0].found);
+                            if (result[0].found === true) {
+                             //   logger.debug("found true");
+                                proofofex.findOne({
+                                    "sha256Hash": result[0].sha256Hash
+                                }, function (err, poe1) {
+                               //     logger.debug(poe1);
+                                    rtelib.raiseEvent('blockchain', 'poeSearch', {
+                                        ts: cts(),
+                                        msg: 'Query based on file hash ' + result[0].sha256Hash + ' is performed'
+                                    });
+                                    let dbstatus = {
+                                        "status": "Success",
+                                        "message": "",
+                                        "result": result[0],
+                                        "_id": poe1._id,
+                                        "__v": poe1.__v,
+                                        "txstatus": poe1.txstatus
+                                    }
+                                 //   logger.debug(dbstatus);
+                                    // res.send(dbstatus);
+                                    finalresult.push(result[0]);
+                                   // console.log("records length " + records.length + "finalresult " + finalresult.length);
+                                    if (records.length == finalresult.length) {
+                                        console.log(finalresult)
+                                        res.send(finalresult);
+                                    }
+                                });
+                            } else {//result.found === false
+    
+                                /* res.send({
+                                    "status": "Success",
+                                    "message": "",
+                                    "result": result
+                                }); */
+                                logger.debug("Failed"+result[0]);
+                           finalresult.push(result[0]);
+                            }
+                        } //closing if(message!=0)
+                        /* else { // if message is empty -- hash not present in ledger
+    
+    
+                            /* res.send({
+                                status: "Success",
+                                message: "",
+                                result: {
+                                    "txId": 0,
+                                    "assetVersion": 0,
+                                    "sha256Hash": 0,
+                                    "sha1Hash": 0,
+                                    "fileName": 0,
+                                    "fileType": 0,
+                                    "documentType": 0,
+                                    "issuedTo": 0,
+                                    "issuedByOrg": 0,
+                                    "issuedByUser": 0,
+                                    "timestamp": {
+                                        "seconds": 0,
+                                        "nanos": 0
+                                    },
+                                    "found": false
+                                }
+                            }) */
+                           // logger.debug("Document not found");
+                          //  finalresult.push(result[0]);
+                       // } */
+                    } else { // in case of error
+    
+                        //res.send(getErrorMessage(JSON.stringify(message)));
+                        logger.debug("Failed"+message);
+                        finalresult.push(message);
+                    }
+                   
+                    
+                } else {
+                    console.log("Invalid");
+                    finalresult.push({"status":"Failed","message":"Invalid Transaction Id"});
+                    //res.json(getErrorMessage("Invalid request"));
+                    //return;
+                }
+
+                
+                //res.send(finalresult);
+            }
+        } else {
+            res.send({
+                status: "Sucess",
+                "message": "No documents found"
+            })
+        }
+    });
+
+};
+// Query a transaction by hash of the file
+exports.querybyhash = async (req, res) => {
+
+    logger.debug('==================== INVOKE ON CHAINCODE BY HASH==================');
+
+    var peers = "peer0.actsorg.cdac.in";
+    /*  var peers = "";
+     if (req.body.peers) {
+         peers = req.body.peers;
+     } else
+         peers = ""; */
+    //    var peers = req.body.peers;
+    var chaincodeName = "cdacpoe";
+    var channelName = "cdacpoechannel";
+    var fcn = "queryProofOfEx";
+
+
+    var sha256Hash = req.body.sha256Hash;
+    /* var re2 = new RegExp('^([a-zA-Z0-9]+)$');
+     if (re2.test(sha256Hash)) {
+         console.log("Valid");
+     } else {
+         console.log("Invalid");
+         res.json(getErrorMessage("Invalid request"));
+         return;
+     }  */
+    //var issuedByOrg = req.body.issuedByOrg;
+    //var issuedByUser = req.body.issuedByUser;
+
+    var issuedByOrg = req.orgname;
+    var issuedByUser = req.username;
+
+  //  logger.debug(req.body);
+   // logger.debug('channelName  : ' + channelName);
+    //logger.debug('chaincodeName : ' + chaincodeName);
+    //logger.debug('fcn  : ' + fcn);
+
+    if (!chaincodeName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    if (!channelName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    if (!validator.isHash(sha256Hash, 'sha256')) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+
+    var args = [
+        sha256Hash
+    ]
+
+    // let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+    let message = await query.queryChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+
+  //  logger.debug("MEssage---------" + JSON.stringify(message));
+
+
+    if (message.status === "Success") {
+        if (message.message.length != 0) {
+            var result = JSON.parse(message.message.toString());
+           // logger.debug(result);
+            //logger.debug('found ', result.found);
+            if (result.found === true) {
+              //  logger.debug("found true");
+                proofofex.findOne({
+                    "sha256Hash": sha256Hash
+                }, function (err, poe1) {
+                //    logger.debug(poe1);
+                    rtelib.raiseEvent('blockchain', 'poeSearch', {
+                        ts: cts(),
+                        msg: 'Query based on file hash ' + sha256Hash + ' is performed'
+                    });
+                    let dbstatus = {
+                        "status": "Success",
+                        "message": "",
+                        "result": result,
+                        "_id": poe1._id,
+                        "__v": poe1.__v,
+                        "txstatus": poe1.txstatus
+                    }
+                    //logger.debug(dbstatus);
+                    res.send(dbstatus);
+                });
+            } else //result.found === false
+                res.send({
+                    "status": "Success",
+                    "message": "",
+                    "result": result
+                });
+        } //closing if(message!=0)
+        else { // if message is empty -- hash not present in ledger
+
+            res.send({
+                status: "Success",
+                message: "",
+                result: {
+                    "txId": 0,
+                    "assetVersion": 0,
+                    "sha256Hash": 0,
+                    "sha1Hash": 0,
+                    "fileName": 0,
+                    "fileType": 0,
+                    "documentType": 0,
+                    "issuedTo": 0,
+                    "issuedByOrg": 0,
+                    "issuedByUser": 0,
+                    "timestamp": {
+                        "seconds": 0,
+                        "nanos": 0
+                    },
+                    "found": false
+                }
+            })
+        }
+    } else { // in case of error
+        res.send(getErrorMessage(JSON.stringify(message)));
+    }
+
+
+};
+
+exports.querybytxId = async (req, res) => {
+
+    logger.debug('==================== INVOKE ON CHAINCODE BY HASH==================');
+    var peers = "peer0.actsorg.cdac.in";
+    /* var peers = "";
+    if (req.body.peers) {
+        peers = req.body.peers;
+    } else
+        peers = ""; */
+    //    var peers = req.body.peers;
+    //  var chaincodeName = req.body.chaincodeName;
+    //var channelName = req.params.channelName;
+    var chaincodeName = "cdacpoe";
+    var channelName = "cdacpoechannel";
+    var fcn = "queryProofOfExByTxid";
+
+    var txId = req.body.txId;
+    var re2 = new RegExp('^([a-zA-Z0-9]+)$');
+    if (re2.test(txId)) {
+        console.log("Valid");
+    } else {
+        console.log("Invalid");
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    //var issuedByOrg = req.body.issuedByOrg;
+    //var issuedByUser = req.body.issuedByUser;
+
+    var issuedByOrg = req.orgname;
+    var issuedByUser = req.username;
+
+   // logger.debug('channelName  : ' + channelName);
+    //logger.debug('chaincodeName : ' + chaincodeName);
+    //logger.debug('fcn  : ' + fcn);
+
+    if (!chaincodeName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    if (!channelName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+
+   // logger.debug("txId Length :" + txId.length);
+
+    if (txId.length != 64) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    var args = [
+        txId
+    ]
+
+    //let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+    let message = await query.queryChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+
+    if (message.status === "Success") {
+        var result = JSON.parse(message.message.toString());
+        if (result[0].found === true) {
+
+            proofofex.findOne({
+                "sha256Hash": result[0].sha256Hash
+            }, function (err, poe1) {
+             //   logger.debug(poe1);
+                rtelib.raiseEvent('blockchain', 'poeSearch', {
+                    ts: cts(),
+                    msg: 'Query based on transaction Id ' + txId + ' is performed'
+                });
+                let dbstatus = {
+                    "status": "Success",
+                    "message": "",
+                    "result": result[0],
+                    "_id": poe1._id,
+                    "__v": poe1.__v,
+                    "txstatus": poe1.txstatus
+                }
+
+                res.send(dbstatus);
+            });
+        } else
+            res.send({
+                "status": "Success",
+                "message": "",
+                "result": result[0]
+            });
+    } else
+        res.send(getErrorMessage(message));
+
+};
+
+exports.getquerybytxId = async (req, res) => {
+
+    logger.debug('==================== INVOKE ON CHAINCODE BY TXID==================');
+    /*
+    var peers = "";
+    if(req.body.peers){
+         peers = req.body.peers;
+    }
+    else
+     peers = "";*/
+    var peers = "peer0.actsorg.cdac.in";
+    var chaincodeName = "cdacpoe";
+    var channelName = "cdacpoechannel";
+    var fcn = "queryProofOfExByTxid";
+
+    var txId = req.query.txId;
+    var re2 = new RegExp('^([a-zA-Z0-9]+)$');
+    if (re2.test(txId)) {
+        console.log("Valid");
+    } else {
+        console.log("Invalid");
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    //var issuedByOrg = req.body.issuedByOrg;
+    //var issuedByUser = req.body.issuedByUser;
+
+    var issuedByOrg = req.orgname;
+    var issuedByUser = req.username;
+
+   // logger.debug('channelName  : ' + channelName);
+    //logger.debug('chaincodeName : ' + chaincodeName);
+    //logger.debug('fcn  : ' + fcn);
+
+    if (!chaincodeName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+    if (!channelName) {
+        res.json(getErrorMessage("Invalid request"));
+        return;
+    }
+
+    //logger.debug("txId Length :" + txId.length);
+
+    if (txId.length != 64) {
+        res.render('error', {
+            data: 'Invalid Request'
+        });
+        return;
+        //res.json(getErrorMessage("Invalid request"));
+        //return;
+    }
+    var args = [
+        txId
+    ]
+
+    //let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+    let message = await query.queryChaincode(peers, channelName, chaincodeName, fcn, args, issuedByUser, issuedByOrg);
+
+    if (message.status === "Success") {
+        var result = JSON.parse(message.message.toString());
+        if (result[0].found === true) {
+
+            proofofex.findOne({
+                "sha256Hash": result[0].sha256Hash
+            }, function (err, poe1) {
+              //  logger.debug(poe1);
+                rtelib.raiseEvent('blockchain', 'poeSearch', {
+                    ts: cts(),
+                    msg: 'Query based on transaction Id ' + txId + ' is performed'
+                });
+                /* let dbstatus = {
+                    "status": "Success",
+                    "message": "",
+                    "result": result[0],
+                    "_id": poe1._id,
+                    "__v": poe1.__v,
+                    "txstatus": poe1.txstatus
+                } */
+
+                
+               
+                generatepdf(result[0].txId, result[0].fileName, result[0].fileType, result[0].documentType, result[0].sha256Hash, result[0].sha1Hash, result[0].issuedTo, result[0].issuedByUser, result[0].issuedByOrg, result[0].timestamp,res);
+                var html = '<html><embed src="/tmp/PoEReceipt_'+txId+'.pdf'+'" type="application/pdf"   height="100%" width="100%" class="responsive"></html>';
+                
+                res.contentType("application/html");
+                res.send(html);
+
+                //ipfs fetfile
+                /*  ipfsClient.fetchFile(poe1.posHash,poe1.issuedTo,poe1.documentType,function(content){
+                     //fs.writeFileSync('/tmp/' + poe1.issuedTo + "_" + poe1.documentType+".txt", content);
+                 }); */
+                //var content = "test";
+
+
+                /*  var files = [{
+                         path: '/tmp/PoEReceipt_' + txId + '.pdf',
+                         name: 'PoEReceipt_' + txId + '.pdf'
+                     },
+                     {
+                         path: '/tmp/' + poe1.issuedTo + "_" + poe1.documentType,
+                         name: poe1.issuedTo + "_" + poe1.documentType
+                     }
+                 ] */
+                // var data =fs.readFileSync(process.cwd()+'/poereceipts/ba1bca832ee4b3b7c49bd8fd0b3e1b62caf9663a21e10836a01eafde520c52ae.pdf');
+               //  res.contentType("application/html");
+                //res.send(receipt_html);
+                //res.download('/tmp/PoEReceipt_' + txId + '.pdf',"PoEReceipt_"+txId+".pdf");
+                // res.zip(files);
+            });
+        } else
+            res.send({
+                "status": "Success",
+                "message": "",
+                "result": result[0]
+            });
+    } else
+        //res.send(getErrorMessage(message));
+        //res.send('error',{data:message})
+        res.status(400).send({
+            data: message
+        })
+
+};
+
+exports.getquerybyposHash = async (req, res) => {
+
+    logger.debug('==================== INVOKE ON CHAINCODE BY TXID==================');
+    /*
+    var peers = "";
+    if(req.body.peers){
+         peers = req.body.peers;
+    }
+    else
+     peers = "";*/
+   
+     var posHash = req.query.hash;
+     ipfsClient.fetchFile(posHash);
+               
+               // generatepdf(result[0].txId, result[0].fileName, result[0].fileType, result[0].documentType, result[0].sha256Hash, result[0].sha1Hash, result[0].issuedTo, result[0].issuedByUser, result[0].issuedByOrg, result[0].timestamp,res);
+     //var html = '<html><embed src="/tmp/PoS.pdf" type="application/pdf"   height="100%" width="100%" class="responsive"></html>';
+     var html = '<html><embed src="/tmp/pos_'+posHash+'"'+' height="100%" width="100%" class="responsive"></html>';
+                
+                res.contentType("application/html");
+                res.send(html); 
+
+};
+// Retrieve and return all properties from the database.
+exports.findAll = (req, res) => {
+
+    proofofex.find({}).then(eachPoe => {
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+// Retrieve and return all properties from the database.
+exports.findDocs = (req, res) => {
+
+    var id = {
+        "_id": -1
+    };
+    proofofex.find({}).sort(id).limit(10).then(eachPoe => {
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+
+exports.fetchyear = (req, res) => {
+
+    var centre = req.body.centrecode;
+
+    proofofex.find({
+        "centre": centre
+    }, {
+        year: 1,
+        _id: 0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+exports.fetchbatch = (req, res) => {
+
+    var centre = req.body.centrecode;
+    var year = req.body.year;
+
+    proofofex.find({
+        "centre": centre,
+        "year": year
+    }, {
+        month: 1,
+        _id: 0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+exports.fetchcourse = (req, res) => {
+
+    var centre = req.body.centrecode;
+    var year = req.body.year;
+    var batch = req.body.batch;
+
+    proofofex.find({
+        "centre": centre,
+        "year": year,
+        "month": batch
+    }, {
+        course: 1,
+        _id: 0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+
+exports.fetchrollNo = (req, res) => {
+
+    var centre = req.body.centrecode;
+    var year = req.body.year;
+    var batch = req.body.batch;
+    var course = req.body.course;
+
+    proofofex.find({
+        "centre": centre,
+        "year": year,
+        "month": batch,
+        "course": course
+    }, {
+        issuedTo: 1,
+        _id: 0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+
+// fetch certificate information
+exports.fetchAllcerts = (req, res) => {
+
+    var centre = req.body.centre;
+    var year = req.body.year;
+    var batch = req.body.batch;
+    var course = req.body.course;
+
+    proofofex.find({
+        "centre": centre,
+        "year": year,
+        "month": batch,
+        "course": course
+    }, {
+        _id: 0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+// Retrieve and return all properties from the database.
+exports.fetchrecords = (req, res) => {
+
+    var batch = req.body.batch;
+    var course = req.body.course;
+    proofofex.find({
+        "month": batch,
+        course: course
+    }, {
+        issuedTo: 1,
+        documentType: 1,
+        sha256Hash: 1,
+        txId: 1,
+        timestamp: 1,
+        _id: 0
+    }).then(eachPoe => {
+        /*res.json({
+            "rollNo":eachPoe.issuedTo,
+            "documentType":eachPoe.documentType,
+            "sha256hash":eachPoe.sha256Hash,
+            "txId": eachPoe.txId,
+            "timestamp":eachPoe.timestamp
+        });*/
+        res.json(eachPoe);
+    })
+    //  res.send("Find All Properties");
+
+};
+
+exports.sendmail = async (req, res) => {
+
+    var subject = req.body.subject;
+    var content = req.body.content;
+    var sendTo = req.body.email;
+
+    let account = await nodemailer.createTestAccount();
+
+    // create reusable transporter object using the default SMTP transport
+    /*let transporter = nodemailer.createTransport({
+      host: "smtp.cdac.in",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: "esuraksha", // generated ethereal user
+        pass: "cdachyd@123$" // generated ethereal password
+      }
+    });*/
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.cdac.in",
+        port: 587,
+        secure: false,
+        authMethod: 'STARTTLS',
+        debug: true, // true for 465, false for other ports
+        auth: {
+
+            user: "esuraksha", // generated ethereal user
+            pass: "cdachyd@123$" // generated ethereal password
+        },
+        messageId: "eSuraksha"
+    });
+    // setup email data with unicode symbols
+    let mailOptions = {
+        from: '"eSuraksha" <esuraksha@cdac.in>', // sender address
+        to: sendTo, // list of receivers
+        subject: subject, // Subject line
+        text: content, // plain text body
+        attachments: [{
+            path: '/home/cdac/CDACPoE/cdacpoerest/6a9f1fd0d9ba7e7ef6706b32f9ce14a6c5912d6dd546e03ec212aff04d8bc576.pdf'
+
+        }]
+
+    };
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail(mailOptions)
+
+    console.log("Message sent: %s", info.messageId);
+
+    res.json("Mail sent Successfully")
+}
+
+
+//function sendmailToStudent(documentType, content, email, rollNo, name, centre) {
+function sendmailToStudent(documentType, sha256Hash,content, email, rollNo, name, centre, cb) {
+
+    console.log("sending mail")
+    let transporter = nodemailer.createTransport({
+        host: "smtp.cdac.in",
+        port: 587,
+        secure: false,
+        authMethod: 'STARTTLS',
+        debug: true, // true for 465, false for other ports
+        auth: {
+
+            user: "cdacchain", // generated ethereal user
+            pass: "cdachyd@123$" // generated ethereal password
+        },
+        messageId: "cdacchain"
+    });
+    // setup email data with unicode symbols
+    let mailOptions = {
+        from: '"cdacchain" <cdacchain@cdac.in>', // sender address
+        to: email, // list of receivers
+        subject: documentType + ' of ' + rollNo, // Subject line
+        html: `Dear ${name},
+
+      <p>Please find attached the ${documentType} which is uploaded in the C-DAC’s PoE for ACTS Certificate solution. Please save this attachment.<br />
+      You can register to the solution at www.cdacchain.in, to view and share your certificate records existence in C-DACs PoE for ACTS Certificate solution to any prospective agencies organizations.<br />
+      </p>
+      <p>Regards,<br />
+      
+      Training Coordinator,<br />
+      ${centre}</p>
+      <h3 style="color:blue;">PoE for ACTS Certificate solution is a Blockchain based Proof of Existence Solution developed by C-DAC Hyderabad.</h1>`,
+        attachments: [{
+            path: content
+
+        }]
+
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, function (err, info) {
+        var emailStatus;
+        if (err) {
+            emailStatus = false
+            console.log(err)
+        } else {
+            emailStatus = true;
+            console.log("Message sent: %s", info.response);
+            proofofex.update({
+                "sha256Hash": sha256Hash
+            }, {
+                $set: {
+                    
+                    "emailStatus":emailStatus
+                   
+                }
+            }, {
+                "multi": true
+            },
+            function (err, rowsUpdated) {
+                if (err) console.log(err);
+                console.log("row updated");
+            });
+        }
+
+        // return emailStatus;
+     //cb(emailStatus);
+
+    })
+
+    //console.log("Message sent: %s", info.messageId);
+
+    // res.json("Mail sent Successfully")
+}
+
+exports.shareStudentRecords = async (req, res) => {
+
+    var txids = req.body.documents;
+    var student = req.body.student;
+
+    var sendTo = req.body.email;
+    console.log(req.body);
+    console.log(txids);
+    var link;
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.cdac.in",
+        port: 587,
+        secure: false,
+        authMethod: 'STARTTLS',
+        debug: true, // true for 465, false for other ports
+        auth: {
+
+            user: "cdacchain", // generated ethereal user
+            pass: "cdachyd@123$" // generated ethereal password
+        },
+        messageId: "cdacchain"
+    });
+    var link = [];
+    txids.forEach(async function (doc) {
+
+        console.log(doc);
+        link.push("http://localhost:5000/poe/transaction?txId=" + doc);
+        // var link = "http://localhost:5000/poe/transaction?txId="+doc;
+
+    });
+    var construct_html = '<html>'
+    console.log(link);
+
+    link.forEach(link => {
+        construct_html += '<li><a href=' + link + '>' + link + '</a></li>'
+    });
+    // setup email data with unicode symbols
+    let mailOptions = {
+        from: '"cdacchain" <cdacchain@cdac.in>', // sender address
+        to: sendTo, // list of receivers
+        subject: 'Certificate(s) / Marksheet of'+student.rollNo, // Subject line       
+        html: `Dear Sir / Madam,
+        <p>I (${student.name}), have completed ${student.course}, ${student.month} batch bearing the Roll no ${student.rollNo} from ${student.centre}. Please find below the link to view details from PoE ACTS Certificate Application of C-DAC Hyderabad which proves the certificate existence.</p>
+        ${construct_html}
+
+        <p>Regards,<br/>
+        
+        ${student.name}</p>
+        <h3 style="color:blue;">PoE ACTS Certificate Application is a Blockchain based Proof of Existence Platform developed by C-DAC Hyderabad.</h1>`,
+
+
+    };
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail(mailOptions)
+    //  let info =  transporter.sendMail(mailOptions)
+
+    console.log("Message sent: %s", info.messageId);
+
+    proofofex.update({
+        "txId": doc
+    }, {
+        $push: {
+            "sharedTo": {
+                "eMail": sendTo
+            }
+        }
+    }, function (err, mailupdated) {
+        console.log("database updated with email")
+
+    })
+
+
+    res.json("Mail sent Successfully");
+
+}
+
+exports.shareRecords = async (req, res) => {
+
+    var centre = "C-DAC Hyderabad"
+    var txids = req.body.documents;
+    var sendTo = req.body.email;
+    console.log(txids);
+    var link;
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.cdac.in",
+        port: 587,
+        secure: false,
+        authMethod: 'STARTTLS',
+        debug: true, // true for 465, false for other ports
+        auth: {
+
+            user: "cdacchain", // generated ethereal user
+            pass: "cdachyd@123$" // generated ethereal password
+        },
+        messageId: "cdacchain"
+    });
+    var link = [];
+    txids.forEach(async function (doc) {
+
+        console.log(doc);
+        link.push("http://localhost:5000/poe/transaction?txId=" + doc);
+        proofofex.find({"txId":doc},function(err,rec){
+            console.log("share records" +rec);
+            if(rec.posStatus === "true" && rec.posHash != ""){
+                console.log(rec.posHash)
+                link.push("http://localhost:5000/poe/transaction?txId=" + rec.txId);
+                link.push("http://localhost:5000/poe/pos?hash=" + rec.posHash);
+            }
+            else{
+                console.log("in else")
+                link.push("http://localhost:5000/poe/transaction?txId=" + rec.txId);
+                console.log(link);
+            }
+        })
+        // var link = "http://localhost:5000/poe/transaction?txId="+doc;
+
+    });
+    var construct_html = '<html>'
+    console.log(link);
+
+    link.forEach(link => {
+        construct_html += '<li><a href=' + link + '>' + link + '</a></li>'
+    });
+    // setup email data with unicode symbols
+    let mailOptions = {
+        from: '"cdacchain" <cdacchain@cdac.in>', // sender address
+        to: sendTo, // list of receivers
+        subject: "Documents for verification", // Subject line       
+        html: `Dear Sir / Madam,
+        <p>Greetings!!</p>
+        <p>Please find below the link(s) of the student(s) Certificate(s) / Marksheet(s) issued by C-DAC <Centre>. These Certificate(s) / Marksheet(s) are recorded in PoE ACTS Certificate Application. Click on the link(s) or login to www.cdacchain.in (using verifier sign in link) with your email id to view the details.</p>
+        ${construct_html}
+
+        <p>Regards,<br/>
+
+        Training Coordinator,<br/>
+        ${centre}</p>      
+        
+        <h3 style="color:blue;">PoE ACTS Certificate Application is a Blockchain based Proof of Existence platform developed by C-DAC Hyderabad.</h1>`,
+
+
+    };
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail(mailOptions)
+    //  let info =  transporter.sendMail(mailOptions)
+
+    console.log("Message sent: %s", info.messageId);
+    txids.forEach(async function (doc) {
+        proofofex.update({
+            "txId": doc
+        }, {
+            $push: {
+                "sharedTo": {
+                    "eMail": sendTo
+                }
+            }
+        }, function (err, mailupdated) {
+            console.log("database updated with email")
+
+        })
+    })
+
+
+    res.json("Mail sent Successfully");
+
+}
+exports.fetchCertsbyUserName = (req, res) => {
+
+    var username = req.body.username;
+    Student.find({
+        username: username
+    }).then(student => {
+        console.log(student)
+        console.log(student[0].rollNo);
+        proofofex.find({
+            "issuedTo": student[0].rollNo
+        }, {
+            issuedTo: 1,
+            documentType: 1,
+            sha256Hash: 1,
+            txId: 1,
+            timestamp: 1,
+            _id: 0
+        }).then(eachPoe => {
+            /*res.json({
+            	"rollNo":eachPoe.issuedTo,
+            	"documentType":eachPoe.documentType,
+            	"sha256hash":eachPoe.sha256Hash,
+            	"txId": eachPoe.txId,
+            	"timestamp":eachPoe.timestamp
+            });*/
+            res.json(eachPoe);
+        })
+
+    })
+    var course = req.body.course;
+
+    //  res.send("Find All Properties");
+
+};
+
+exports.verifierRecords = (req, res) => {
+
+    // console.log(req)
+    var email = req.body.email;
+    //var email = "siri.chiliveri@gmail.com";
+    proofofex.find({
+        "sharedTo.eMail": email
+    }, {
+        issuedTo: 1,
+        documentType: 1,
+        sha256Hash: 1,
+        txId: 1,
+        timestamp: 1,
+        _id: 0
+    }).then(eachRecord => {
+        res.json(eachRecord);
+    })
+
+};
+
+function getByteArray(filePath) {
+    let fileData = fs.readFileSync(filePath).toString('hex');
+    let result = []
+    for (var i = 0; i < fileData.length; i += 2)
+        result.push('0x' + fileData[i] + '' + fileData[i + 1])
+    return result;
+}
+
+async function qrcode_gen(){
+    var code = await qrcode.toDataURL('http://cdacchain.in');
+    return code;
+}
+async function generatepdf(txId, fileName, fileType, documentType, sha256Hash, sha1Hash, issuedTo, issuedByUser, issuedByOrg, timestamp, res) {
+
+
+    
+    var code = await qrcode.toDataURL('http://cdacchain.in/poe/transaction?txId='+txId);
+    //console.log(code);
+    var receipt_html = '<html>';
+
+    receipt_html += '<head><style>table, th, td {  border: 1px solid black;' +
+        '  border-collapse: collapse;}'+
+        'th, td {' +
+        'word-wrap:break-word; overflow:hidden;padding: 3px;' +
+        'text-align: left;    ' + 
+        'font-size:8pt; font-family="arial";}'+
+        'tr:nth-child(even) {background-color:#f3f3f3;}'+
+        '</style></head><body>';
+          
+
+    receipt_html+= '<img src="file:///home/cdac/Downloads/cdac.png" width="80",alt="cdac" height="50" align="right"><br/><br/>';
+    receipt_html+= '<b><div style="text-align: center; style="color:blue width="50"; height="50";>PoE Receipt</div></b>';
+    receipt_html += '<div><p style="font-size:2px"><table style="width:90%" font-size:"2pt"; font-family="arial";table-layout:fixed; height:"150">';
+    receipt_html += '<tr> <th>Transaction Id</th><td font-size:"2pt";>' + txId + '</td></tr>'
+    receipt_html += '<tr><th>FileName</th><td>' + fileName + '</td></tr>'
+    receipt_html += '<tr><th>FileType</th><td>' + fileType + '</td></tr>'
+    receipt_html += '<tr><th>Document Type</th><td>' + documentType + '</td></tr>'
+    receipt_html += '<tr><th>sha256Hash</th><td>' + sha256Hash + '</td></tr>'
+    receipt_html += '<tr><th>sha1Hash</th><td>' + sha1Hash + '</td></tr>'
+    receipt_html += '<tr><th>issuedTo</th><td>' + issuedTo + '</td></tr>'
+    receipt_html += '<tr><th>issuedByOrg</th><td>' + issuedByOrg + '</td></tr>'
+    receipt_html += '<tr><th>issuedByUser</th><td>' + issuedByUser + '</td></tr>'
+  //receipt_html += '<tr><th>Timestamp</th><td>' + timestamp + '</td></tr>'
+    receipt_html += '</table></p></div>'
+   
+  //  receipt_html +='<img src="file:///home/cdac/Downloads/qrcode.png" width="80",alt="cdac" height="80" align="left">';
+  receipt_html +='<img src="'+code+'"'+ 'width="80",alt="cdac" height="80" align="left">';
+  //receipt_html+= '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAO/SURBVO3BQY4kRwIDQXqg/v9l3znowFMAiaxuaRY0wz8y84+TmXIyU05myslMOZkpJzPlZKaczJSTmXIyU05myslMOZkpJzPlZKZ88hKQ36TmBsgTahqQJ9TcAPlNat44mSknM+VkpnzyZWq+CcgNkKbmCSA3ahqQN9R8E5BvOpkpJzPlZKZ88sOAPKHmCTUNSFPTgNyo+U1AnlDzk05myslMOZkpn/yfA9LUNCA3QJqa/2cnM+VkppzMlE/+ckBu1DwB5AbIjZq/2clMOZkpJzPlkx+m5iepaUAakKamqbkBcqPmDTX/JScz5WSmnMyUT74MyG8C0tQ0IDdAmpobNQ1IU3MD5L/sZKaczJSTmfLJS2r+TWoakCfUNCBNzRtq/iYnM+VkppzMlE9eAtLUNCBNTQPS1DQgTc2NmgbkBkhT04D8JCBNzQ2QpuabTmbKyUw5mSn4R34QkBs1TwBpat4A0tQ8AeQJNd8EpKl542SmnMyUk5nyyUtAfhKQpuYGyI2apqYBaWpu1NwAuQHS1DQgv+lkppzMlJOZgn/kFwFpahqQpqYBaWoakKbmBkhTcwOkqflNQJqabzqZKScz5WSmfPISkCfUNCBNTQNyA6SpaUCamm8C8oSaGyBNzQ2QpuaNk5lyMlNOZsonL6l5AsgNkKamAWlqngByA6SpaWoakN+kpgH5ppOZcjJTTmbKJy8BaWoakKbmCSBNTQPS1LyhpgFpapqaGyANSFPT1DQgv+lkppzMlJOZ8slLahqQpuYGyI2aJ4A0NTdAGpAbIE3NNwFpahqQpuabTmbKyUw5mSmfvASkqbkB0tQ0IA1IU3OjpgG5UXMDpKlpQN4A8oSan3QyU05myslMwT/yFwPS1NwAaWpugDyh5gkg36TmjZOZcjJTTmbKJy8B+U1qmpobIE3NDZCmpgF5AkhTc6PmBshPOpkpJzPlZKZ88mVqvgnIE0CamgakqWlqbtQ0IDdqngDS1DQ1Dcg3ncyUk5lyMlM++WFAnlDzBJCm5kZNA9LUvAHkDTX/ppOZcjJTTmbKJ385NTdAngDS1DQgTc0TQJ4A0tQ0Nd90MlNOZsrJTPnkLwekqXlDTQPS1PwkIE3NDZCm5o2TmXIyU05myic/TM1PUtOANDU3QBqQGyBPqGlqGpAngDQ133QyU05myslM+eTLgPwmIE8AaWpugHwTkKbmDSBNzRsnM+VkppzMFPwjM/84mSknM+VkppzMlJOZcjJTTmbKyUw5mSknM+VkppzMlJOZcjJTTmbK/wA9Uq0xJJiC3gAAAABJRU5ErkJggg==" width="80",alt="cdac" height="80" align="left">'
+    receipt_html +='<br/><br/><span><text style="font-size:8pt; color:blue;">http://cdacchain.in<br>Scan QR-Code or visit above url to verify authenticity of this document.'+
+    '<br> This document is computer generated and hence does not require signature.</text></span>'
+    receipt_html += '</body>'
+    receipt_html += '</html>'
+
+    var options = {
+
+        // Export options
+        "directory": "/tmp", // The directory the file gets written into if not using .toFile(filename, callback). default: '/tmp'
+
+        "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+        "orientation": "portrait", // portrait or landscape
+
+        // Page options
+
+        /* "border": {
+            "top": "2in", // default is 0, units: mm, cm, in, px
+            "right": "1in",
+            "bottom": "2in",
+            "left": "1.5in"
+        }, */
+
+        paginationOffset: 1, // Override the initial pagination number
+       /*  "header": {
+            "height": "15mm",
+            "contents": '<b><div style="text-align: center; style="color:blue">PoE Receipt</div></b>'
+        }, */
+        /* "footer": {
+            "height": "28mm",
+            "contents": {
+                first: 'Cover page',
+                2: 'Second page', // Any page number is working. 1-based index
+                default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+                last: 'Last Page'
+            }
+        }, */
+
+
+        // Rendering options
+      //  "base": "file:///home/www/your-asset-path", // Base path that's used to load files (images, css, js) when they aren't referenced using a host
+
+        // Zooming option, can be used to scale images if `options.type` is not pdf
+       // "zoomFactor": "1", // default is 1
+
+        // File options
+       // "type": "pdf", // allowed file types: png, jpeg, pdf
+      //  "quality": "75", // only used for types png & jpeg
+
+        // Script options
+        // "phantomPath": "./node_modules/phantomjs/bin/phantomjs", // PhantomJS binary which should get downloaded automatically
+        // "phantomArgs": [], // array of strings used as phantomjs args e.g. ["--ignore-ssl-errors=yes"]
+        // "script": '/url',           // Absolute path to a custom phantomjs script, use the file in lib/scripts as example
+        // "timeout": 30000,           // Timeout that will cancel phantomjs, in milliseconds
+
+        // Time we should wait after window load
+        // accepted values are 'manual', some delay in milliseconds or undefined to wait for a render event
+       "renderDelay": 1000,
+
+
+
+    };
+    pdf.create(receipt_html, options).toFile('/tmp/PoEReceipt_' + txId + '.pdf', function (err, res1) {
+        if (err) return console.log(err);
+        console.log(res1); // { filename: '/app/businesscard.pdf' }
+        // res.sendFile(res.filename);
+        // setResponseHeaders(res, '/tmp/PoEReceipt_' + txId + '.pdf');
+      //  res.contentType("application/pdf");
+       /*  phantom.create().then(function (ph) {
+            ph.createPage().then(function (page) {
+                page.open('/tmp/PoEReceipt_' + txId + '.pdf').then(function (status) {
+                    page.render('/tmp/PoEReceipt_' + txId + '.pdf').then(function () {
+                        console.log('Page Rendered');
+                        ph.exit();
+                    });
+                });
+            });
+        }); */
+    });
+
+     return res;
+} 
+    
+
+
+function setResponseHeaders(res, filename) {
+    res.header('Content-disposition', 'inline; filename=' + filename);
+    res.header('Content-type', 'application/pdf');
+}

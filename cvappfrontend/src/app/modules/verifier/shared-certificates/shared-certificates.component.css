@@ -1,0 +1,88 @@
+.main-card {
+  height: calc(100% - 32px);
+  overflow-y: auto
+}
+
+.wrap {
+  white-space: pre-wrap;
+  /* CSS3 */
+  white-space: -moz-pre-wrap;
+  /* Firefox */
+  white-space: -pre-wrap;
+  /* Opera <7 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* IE */
+}
+
+.label {
+  width: 150px;
+  color: wheat;
+}
+
+.card-container {
+  max-height: 69vh;
+  overflow: auto;
+  padding-bottom: 16px;
+}
+
+.certificate-card {
+  float: left;
+  margin-top: 12px;
+  margin-left: 8px;
+  margin-bottom: 8px;
+  margin-right: 12px;
+}
+
+.card {
+  color: white;
+  /* background-color: lightseagreen; */
+  flex: 1 1 auto;
+  width: 256px;
+  height: 120px;
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-size: 19px;
+  color: lightcyan
+}
+
+.title {
+  font-size: 17pt;
+  font-family: sans-serif;
+  color: darkslategray;
+}
+
+.heading {
+  /* width: 50%; */
+  padding-left: 24px;
+  padding-top: 2px;
+  display: flex;
+  flex-direction: column
+}
+
+.mat-card-title {
+  margin-left: -12px;
+  font-size: 20px;
+  /* color: grey */
+}
+
+.logo {
+  margin-left: -24px
+}
+
+.container {
+  height: 83vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.error-container {
+  height: 65vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

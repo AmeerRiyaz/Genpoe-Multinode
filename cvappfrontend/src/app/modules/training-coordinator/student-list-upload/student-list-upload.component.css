@@ -1,0 +1,82 @@
+
+
+.action-bar {
+    /* margin-bottom: 16px; */
+    display: flex;
+    flex-direction: row;
+}
+
+.action-button {
+    margin-left: 16px;
+    width: 156px;
+    height: 36px;
+}
+
+.action-spinner {
+    margin-top: 10px;
+    margin-left: 70px;
+    margin-right: 70px
+}
+
+#file-chip {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    margin-bottom: 16px;
+    padding-left: 8px;
+    border-radius: 4px;
+}
+
+.mat-form-field {
+    min-width: 256px;
+    max-width: auto;
+    margin-right: 16px;
+}
+
+
+.csvData {
+    height: calc(100% - 32px)
+}
+
+/* mat-card {
+    height: calc(100% - 32px);
+} */
+.mat-table {
+    /* margin-top: -20px; */
+    width: 100%;
+}
+
+mat-cell {
+    display: flex !important;
+    justify-content: center!important;
+    text-align: center;
+}
+
+.mat-row:hover {
+    background-color: whitesmoke;
+}
+
+.mat-header-cell {
+    /* display:flex; */
+    /* justify-content:center; */
+    text-align: center;
+    font-weight: bold;
+    padding: 0px 12px 0px 12px
+}
+
+td.mat-cell {
+    text-align: center;
+    padding: 0px 12px 0px 12px
+}
+
+.error-container {
+    height: calc(100% - 64px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-mat-card-content {
+    height: calc(100% - 40px);
+    margin-right: 8px;
+}

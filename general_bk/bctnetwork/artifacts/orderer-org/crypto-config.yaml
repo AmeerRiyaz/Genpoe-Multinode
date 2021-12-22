@@ -1,0 +1,20 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: cdac.in
+    Specs:
+      - Hostname: orderer
+      - Hostname: orderer2
+      - Hostname: orderer3
+      - Hostname: orderer4
+      - Hostname: orderer5
+        SANS:
+          - "localhost"
+          - "127.0.0.1"
+    CA:
+        Hostname: ca
+        OrganizationalUnit: CDAC Hyderabad
+        Locality: Hyderabad
+        StreetAddress: Plot No. 6 & 7, Hardware Park, Sy No. 1/1, Via Keshavagiri
+            (Post, Srisailam Hwy, Pahadi Shareef, Hyderabad, Telangana
+        Country: IN
+        Province: Telangana

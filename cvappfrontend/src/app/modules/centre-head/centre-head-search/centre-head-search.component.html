@@ -1,0 +1,89 @@
+<mat-card class="mat-elevation-z4">
+  <mat-card-header>
+    <mat-card-title>Certificates</mat-card-title>
+    <mat-card-subtitle style="margin-left: -16px; font-size: 9pt">Select year, batch and course </mat-card-subtitle>
+    <div class="action-bar">
+
+      <form [formGroup]="searchForm">
+
+        <!-- <mat-form-field appearance="outline">
+            <mat-label>Centre</mat-label>
+            <mat-select formControlName="centre" (selectionChange)="onSelectCentre($event)" placeholder="Centre">
+              <mat-option *ngFor="let centre of centreList" [value]="centre">{{centre}}</mat-option>
+            </mat-select>
+          </mat-form-field> -->
+        <mat-form-field appearance="outline">
+          <mat-label>Year</mat-label>
+          <mat-select formControlName="year" (selectionChange)="onSelectYear($event)" placeholder="Centre">
+            <mat-option *ngFor="let year of yearList" [value]="year">{{year}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="year.invalid">{{getSelectionValidationMessage()}}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Batch</mat-label>
+          <mat-select formControlName="batch" (selectionChange)="onSelectBatch($event)" placeholder="Batch">
+            <mat-option *ngFor="let batch of batchList" [value]="batch">{{batch}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="batch.invalid">{{getSelectionValidationMessage()}}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Course</mat-label>
+          <mat-select formControlName="course" (selectionChange)="search()" placeholder="Course">
+            <mat-option *ngFor="let course of courseList" [value]="course">{{course}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="course.invalid">{{getSelectionValidationMessage()}}</mat-error>
+        </mat-form-field>
+      </form>
+
+    </div>
+  </mat-card-header>
+  <mat-card-content  class="container-mat-card-content">
+    <!-- SEARCH RESULT -->
+    <div *ngIf="!searchRequestState.showData" class="container-error">
+      <mat-spinner *ngIf="searchRequestState.requestInProgress" [diameter]="30"></mat-spinner>
+      <div *ngIf="!searchRequestState.requestInProgress && !searchRequestState.showData">
+        <button mat-fab [disabled]='!searchForm.valid' color="primary" (click)="search()">
+          <mat-icon>search</mat-icon>
+        </button>
+        {{searchRequestState.msgToUser}}
+      </div>
+    </div>
+    <div [hidden]="!searchRequestState.showData" class="container-data">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Search list</mat-label>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Enter">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-table #table [dataSource]="dataSource" matSort>
+
+        <ng-container cdkColumnDef="txId">
+          <mat-header-cell *cdkHeaderCellDef mat-sort-header> Transaction Id </mat-header-cell>
+          <mat-cell *cdkCellDef="let row"> {{row.txId ? (row.txId | hashtruncate:[16, '...']) : 'NA' }} </mat-cell>
+        </ng-container>
+
+        <ng-container cdkColumnDef="issuedTo">
+          <mat-header-cell *cdkHeaderCellDef mat-sort-header> Roll No </mat-header-cell>
+          <mat-cell *cdkCellDef="let row"> {{row.issuedTo}} </mat-cell>
+        </ng-container>
+
+        <ng-container cdkColumnDef="timestamp">
+          <mat-header-cell *cdkHeaderCellDef mat-sort-header> Date </mat-header-cell>
+          <mat-cell *cdkCellDef="let row"> {{row.timestamp}} </mat-cell>
+        </ng-container>
+
+        <ng-container cdkColumnDef="details">
+          <mat-header-cell fxFlex="82px" *cdkHeaderCellDef> Details </mat-header-cell>
+          <mat-cell (click)="viewDetilas(row)" fxFlex="82px" *cdkCellDef="let row">
+            <mat-icon color="primary">more</mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="['txId','issuedTo','timestamp','details']; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['txId','issuedTo','timestamp','details'];"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="[10, 20,50,100]" showFirstLastButtons></mat-paginator>
+    </div>
+
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,78 @@
+<mat-card class="container-mat-card-org mat-elevation-z0">
+
+
+  <mat-card-header>
+    <mat-card-title>Profile</mat-card-title>
+  </mat-card-header>
+  <mat-card-content fxFlex>
+
+    <mat-accordion>
+      <mat-expansion-panel [expanded]='true'>
+        <mat-expansion-panel-header>
+          Document Categories
+        </mat-expansion-panel-header>
+        <div>
+
+          <mat-spinner *ngIf="getCategoryRequest.requestInProgress" [diameter]=32 style="margin: auto 4px auto 32px;">
+          </mat-spinner>
+          <mat-form-field class="example-chip-list" *ngIf="!getCategoryRequest.requestInProgress">
+            <mat-label></mat-label>
+            <mat-chip-list #chipList>
+              <mat-chip *ngFor="let category of docCategories" [removable]="removable && (docCategories.length > 1)"
+                (removed)="removeCategoryChip(category)"
+                [disabled]="addCategoryRequest.requestInProgress || removeCategoryRequest.requestInProgress">
+                {{category}}
+                <mat-icon matChipRemove *ngIf="(docCategories.length > 1)" matTooltip="Remove this category">cancel
+                </mat-icon>
+              </mat-chip>
+              <mat-spinner [diameter]=32 style="margin: auto 4px auto 8px;"
+                *ngIf="addCategoryRequest.requestInProgress || removeCategoryRequest.requestInProgress">
+              </mat-spinner>
+              <input matInput placeholder="Add new document category" [matChipInputFor]="chipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                (matChipInputTokenEnd)="addCategoryChip($event)">
+            </mat-chip-list>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]='currentLogo ? false:true'>
+
+        <mat-expansion-panel-header>
+          Organization Logo
+        </mat-expansion-panel-header>
+        <div style="display: flex; flex-direction: row;">
+          <img *ngIf="authService.orgLogo" class="logo" [src]="isFileSelected ? logoFile : authService.orgLogo">
+
+          <mat-spinner *ngIf="uploadLogoRequest.requestInProgress" [diameter]=32 style="margin: auto 4px auto 32px;">
+          </mat-spinner>
+          <button *ngIf="!uploadLogoRequest.requestInProgress" style="width: 64px;" mat-stroked-button
+            style="margin: auto 4px auto 32px;"
+            (click)="isFileSelected ? uploadLogo() : fileInput.click()">{{logoChangeButtonLabel}}</button>
+          <button mat-button *ngIf="isFileSelected && !uploadLogoRequest.requestInProgress" (click)="resetFile()"
+            style="margin: auto auto auto 4px;">Cancel</button>
+          <input type="file" accept=".jpeg,.png,jpg" (change)="fileChange($event)" #fileInput hidden>
+        </div>
+      </mat-expansion-panel>
+
+
+
+    </mat-accordion>
+
+
+  </mat-card-content>
+
+
+
+  <!-- <mat-card-header>
+    <mat-card-title>Profile</mat-card-title>
+  </mat-card-header>
+  <mat-card-content fxFlex>
+    <input type="file" accept=".jpeg,.png,jpg" (change)="fileChange($event)" #fileInput>
+    <button mat-raised-button (click)="uploadLogo()">Save Org Logo</button>
+    <div *ngIf="logoFile" class="logo-container">
+      <img [src]="logoFile" alt="" srcset="" class="logo">
+    </div>
+  </mat-card-content> -->
+
+</mat-card>

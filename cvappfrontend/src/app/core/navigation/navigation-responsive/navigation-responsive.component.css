@@ -1,0 +1,103 @@
+.example-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.example-is-mobile .example-toolbar {
+  position: fixed;
+  /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+  z-index: 4;
+}
+
+h1.example-app-name {
+  margin-left: 8px;
+  margin-right: 16px;
+}
+
+.example-sidenav-container {
+  /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+       causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+  flex: 1;
+  background: linear-gradient(to top, whitesmoke, transparent 99%);
+}
+
+.example-is-mobile .example-sidenav-container {
+  /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
+       `<body>` to be our scrolling element for mobile layouts. */
+  flex: 1 0 auto;
+}
+
+.mat-sidenav {
+  width: 256px;
+}
+
+/* .mat-sidenav-content{
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-bottom: 16px;
+      
+    width: 100%;
+  } */
+
+/* .toolbar-bottom-shade{
+    background: linear-gradient(to top, whitesmoke, transparent 99%);
+  } */
+
+.sidebar {
+  color: darkslategray;
+}
+
+.main-toolbar {
+  /* background-color: white; */
+  background-color: teal;
+  color: white
+  /* color: darkslategray; */
+}
+
+.titlebar-spacer {
+  flex: 1 1 auto;
+}
+
+.mat-nav-list a {
+  color: darkslategray;
+  height: 48px;
+}
+
+.mat-nav-list a.active {
+  background-color: teal;
+  color: white;
+}
+
+.heading {
+  background-color: whitesmoke;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  color: darkslategray
+}
+
+::ng-deep .mat-toolbar {
+  justify-content: center;
+  /* align items in Main Axis */
+}
+
+.invert-img {
+  -webkit-filter: invert(1);
+  filter: invert(1);
+}
+
+.profile {
+  width: 128px;
+}
+
+.router-container {
+  height: calc(100vh - 48px);
+  width: 100%;
+  position: absolute;
+  z-index: -8;
+}

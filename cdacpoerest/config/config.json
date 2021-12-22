@@ -1,0 +1,12 @@
+{
+    "host": "localhost",
+    "port": "4000",
+    "jwt_expiretime": "60", 
+    "channelName": "pmbctchannel",
+    "CC_SRC_PATH": "../hyperledger/artifacts",
+    "eventWaitTime": "30000",
+    "admins": [{
+        "username": "admin",
+        "secret": "adminpw"
+    }]
+}

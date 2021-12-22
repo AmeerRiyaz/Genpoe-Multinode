@@ -1,0 +1,116 @@
+<mat-card class="container-mat-card">
+    <mat-card-header style="float: right; text-align: right; display: flex;flex-direction: column">
+        <mat-card-title>Welcome {{username | titlecase}} </mat-card-title>
+        <mat-card-subtitle style="text-align: right;">{{role}} at {{centre}}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="container-mat-card-content">
+        <div class="dash-container">
+            <mat-card class="dash-card" [ngClass]="isHovering[0] ? 'mat-elevation-z4' : 'mat-elevation-z2'"
+                (click)="navigate('training/certificates')" (mouseenter)="mouseHovering(0)"
+                (mouseleave)="mouseLeaving(0)">
+                <mat-card-content>
+                    <div class="dash-content" *ngIf="!isHovering[0]">
+                        <mat-icon class="dash-icon">credit_card</mat-icon>
+                    </div>
+                    <div class="dash-content-text" *ngIf="isHovering[0]">
+                        Click to view or share certificates
+                    </div>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <mat-card-actions>
+                    <div class="dash-title">
+                        Certificates
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+
+            <mat-card class="dash-card" [ngClass]="isHovering[1] ? 'mat-elevation-z4' : 'mat-elevation-z2'"
+                (click)="navigate('training/upload/certificates')" (mouseenter)="mouseHovering(1)"
+                (mouseleave)="mouseLeaving(1)">
+                <mat-card-content>
+                    <div class="dash-content" *ngIf="!isHovering[1]">
+                        <mat-icon class="dash-icon">cloud_upload</mat-icon>
+                    </div>
+                    <div class="dash-content-text" *ngIf="isHovering[1]">
+                        Click to upload certificates or marksheets
+                    </div>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <mat-card-actions>
+                    <div class="dash-title">
+                        Upload Certificates
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+
+
+            <mat-card class="dash-card" [ngClass]="isHovering[2] ? 'mat-elevation-z4' : 'mat-elevation-z2'"
+                (click)="navigate('training/upload/students')" (mouseenter)="mouseHovering(2)"
+                (mouseleave)="mouseLeaving(2)">
+                <mat-card-content>
+                    <div class="dash-content" *ngIf="!isHovering[2]">
+                        <mat-icon class="dash-icon">cloud_upload</mat-icon>
+                    </div>
+                    <div class="dash-content-text" *ngIf="isHovering[2]">
+                        Click to upload student details in CSV or XLS file
+                    </div>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <mat-card-actions>
+                    <div class="dash-title">
+                        Upload Student Details
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+
+            <mat-card class="dash-card" [ngClass]="isHovering[3] ? 'mat-elevation-z4' : 'mat-elevation-z2'"
+                (click)="navigate('training/search')" (mouseenter)="mouseHovering(3)" (mouseleave)="mouseLeaving(3)">
+                <mat-card-content>
+                    <div class="dash-content" *ngIf="!isHovering[3]">
+                        <mat-icon class="dash-icon">search</mat-icon>
+                    </div>
+                    <div class="dash-content-text" *ngIf="isHovering[3]">
+                        Click to search by roll number, transaction id or document hash
+                    </div>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <mat-card-actions>
+                    <div class="dash-title">
+                        Search
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+
+        <div class="description-container">
+            <mat-card class="description-card mat-elevation-z2">
+                <mat-card-header>
+                    <mat-card-subtitle>Screenshots</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content style="height: 87%">
+                    <slideshow [imageUrls]="imageUrlArray" [autoPlay]="true"></slideshow>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="description-card mat-elevation-z2">
+                <mat-card-header>
+                    <mat-card-subtitle>Description</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content style="height: 87%">
+                    <ul>
+                        <li>Allowed Operations
+                            <ul>
+                                <li> Upload Student Details </li>
+                                <li> Upload Certificates </li>
+                                <li> View the List of uploaded Certificates </li>
+                                <li> Share the Uploaded Certificates to Others(Ex: Recruiters) via eMail </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <app-statistics></app-statistics>
+
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,138 @@
+<!-- <mat-expansion-panel class="mat-elevation-z8" [hideToggle]="panelOpen" (opened)="panelOpen = true" (closed)="panelOpen = false"
+  *ngIf="role === roleList.WRITER" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon color="primary" style="margin-right: 4px">add_circle</mat-icon>
+      <span style="margin-top: 3px;">
+        Upload Document for Proof-of-Existence</span>
+    </mat-panel-title>
+    <mat-panel-description *ngIf="!panelOpenState">
+      Click here to upload document for PoE in Blockchain
+    </mat-panel-description>
+  </mat-expansion-panel-header> -->
+<mat-card class="mat-elevation-z0" style="margin: -18px ;">
+
+  <div class="pmoneleft" *ngIf="!recordTransactionRequest.showData">
+    <!-- <mat-card-title>Record document for PoE on Blockchain</mat-card-title> -->
+    <!-- <input type="file" (change)="onFileChanged($event)" #fileElement> -->
+    <!-- ----------------------------------------------------------------- -->
+    <form [formGroup]="recordTransactionFormGroup">
+      <mat-form-field>
+        <mat-label>Enter a name for file</mat-label>
+        <input matInput formControlName="docType" placeholder="Considered as name of file" #docType >
+        <mat-error>Please provide file name</mat-error>
+      </mat-form-field>
+      <input [hidden]="true" formControlName="fileSelection" type="file" (change)="onFileChanged($event)"
+        placeholder="Upload file" accept=".pdf,.png,.jpg,.jpeg,.bmp" #fileInput>
+    </form><br>
+    <div class="pmtworight" *ngIf="isFileSelected && !recordTransactionRequest.showData">
+      <table>
+        <tr>
+          <td>
+            <b>Name: </b>
+          </td>
+          <td>{{selectedFiles[0].name}}</td>
+        </tr>
+        <tr>
+          <td>
+            <b>Size:</b>
+          </td>
+          <td>{{this.utils.formatBytes(selectedFiles[0].size)}}</td>
+        </tr>
+        <!-- <tr>
+                      <td>
+                        <b>Type:</b>
+                      </td>
+                      <td>{{selectedFiles[0].type}}</td>
+                    </tr> -->
+      </table>
+    </div>
+    <br>
+    <div class="action-bar">
+      <div *ngIf="isFileSelected">
+        <mat-slide-toggle color="primary" [(ngModel)]="allowStorage" [checked]="allowStorage">
+          Store original file
+          <!-- <mat-icon style="vertical-align: middle;" color=""
+                  matTooltip="Enabling this will store file otherwise only hash of file is stored">info
+                </mat-icon> -->
+
+        </mat-slide-toggle><br>
+        <mat-hint style="font-size: small;">
+          Enabling this will store the file otherwise only hash of file is recorded
+        </mat-hint>
+      </div>
+
+    </div>
+    <div class="action-bar">
+      <div fxFlex></div>
+      <div>
+        <button mat-stroked-button *ngIf="isFileSelected" (click)="resetFileSelection()" color="warn"
+          matTooltip="Clear file" style="margin-right: 8px">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </div>
+      <div>
+        <button
+          [disabled]="isFileSelected ? recordTransactionRequest.showData || !recordTransactionFormGroup.valid : false"
+          class="action-button mat-primary mat-elevation-z6" mat-raised-button
+          (click)=" isFileSelected ? recordTransaction() : fileInput.click()">
+          <mat-icon style="padding-right: 4px">{{buttonIcon}}</mat-icon>
+          {{buttonName}}
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <ng-container id="summary" *ngIf="recordTransactionRequest.showData;">
+    <span mat-dialog-title class="wrap">Successfully recorded document for PoE on Blockchain. Download
+      receipt for details</span>
+    <p *ngIf="poeTransactionResponse.result.txId" mat-dialog-subtitle class="wrap"><span class="label">Transaction ID :
+      </span>{{poeTransactionResponse.result.txId}}</p>
+    <p mat-dialog-subtitle class="wrap"><span class="label">SHA256 : </span>{{poeTransactionResponse.result.sha256Hash}}
+    </p>
+    <p mat-dialog-subtitle *ngIf="!poeTransactionResponse.result.txId" style="font-weight: bold; color: red;">Invalid
+      Transaction</p>
+    <div class="container">
+      <fieldset>
+        <legend>Details</legend>
+        <table>
+
+          <tr>
+            <td class="label">File Name</td>
+            <td>{{poeTransactionResponse.result.fileName}}</td>
+          </tr>
+          <!-- <tr>
+            <td class="label">Doc Type</td>
+            <td>{{poeTransactionResponse.result.documentType}}</td>
+          </tr> -->
+          <tr>
+            <td class="label">User</td>
+            <td>{{poeTransactionResponse.result.issuedTo}}</td>
+          </tr>
+
+          <tr>
+            <td class="label">Date</td>
+            <td>{{poeTransactionResponse.result.timestamp}}</td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+    <div *ngIf="!poeTransactionResponse.result.posHash" style="font-style: italic">File not stored for this transaction
+    </div>
+    <div style="margin-top: 8px">
+      <button mat-stroked-button class="pmsmallbtn" color='primary' (click)="downloadReceipt(poeTransactionResponse.result)">
+        <mat-icon>receipt</mat-icon>
+        Receipt
+      </button>
+      <div fxFlex></div>
+      <button mat-button color="primary" (click)="closeDialog()">Close</button>
+    </div>
+  </ng-container>
+
+  <ng-template *ngIf="!recordTransactionRequest.showData;">
+    <h4 class="pmerror wrap" *ngIf="isFileSelected">{{recordTransactionRequest.msgToUser}}</h4>
+  </ng-template>
+</mat-card>

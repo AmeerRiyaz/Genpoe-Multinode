@@ -1,0 +1,251 @@
+<mat-card class="mat-elevation-z0">
+  <!-- <mat-card-header> -->
+    <mat-card-title>Record certificate for Proof Of Existence on blockchain</mat-card-title>
+  <!-- </mat-card-header> -->
+  <br>
+  <mat-card-content style="height: calc(100% - 16px)">
+    <div style="height: 100%;">
+
+
+      <div class="selection-div-container">
+
+        <!--   SIDE BAR : Course selection   -->
+        <div class="course-selection-div">
+          <mat-tab-group mat-stretch-tabs [disableRipple]="true">
+            <mat-tab label="Course Selection">
+
+              <form [formGroup]="selectionForm" style="display: flex; flex-direction: column; padding: 12px">
+                <!-- <mat-form-field appearance="outline">
+                  <mat-label>Centre</mat-label>
+                  <mat-select formControlName="centre" (selectionChange)="onSelectCentre($event)" placeholder="Centre">
+                    <mat-option *ngFor="let centre of centreList" [value]="centre.CentreName">{{centre.CentreName}}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="centre.invalid">{{getSelectionValidationMessage()}}</mat-error>
+                </mat-form-field> -->
+                <mat-form-field appearance="outline">
+                  <mat-label>Year</mat-label>
+                  <mat-select formControlName="year" (selectionChange)="onSelectYear($event)" placeholder="Centre">
+                    <mat-option *ngFor="let year of yearList" [value]="year">{{year}}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="year.invalid">{{getSelectionValidationMessage()}}</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Batch</mat-label>
+                  <mat-select formControlName="batch" (selectionChange)="onSelectBatch($event)" placeholder="Batch">
+                    <mat-option *ngFor="let batch of batchList" [value]="batch">{{batch}}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="batch.invalid">{{getSelectionValidationMessage()}}</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Course</mat-label>
+                  <mat-select formControlName="course" (selectionChange)="onSelectCourse()" placeholder="Course">
+                    <mat-option *ngFor="let course of courseList" [value]="course">{{course}}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="course.invalid">{{getSelectionValidationMessage()}}</mat-error>
+                </mat-form-field>
+              </form>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+
+        <mat-divider [vertical]="true"></mat-divider>
+
+
+        <div class="certificate-selection-container">
+
+          <mat-tab-group class="upload-tabs mat-elevation-z0" animationDuration="0ms" [disableRipple]='true'>
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon style="padding: 4px">cloud_upload</mat-icon>
+                <span style="margin-right: 4px">Upload</span>
+
+                <mat-form-field style="margin: 7px 0px 0px 4px; font-size: 14px; width: 64px">
+                  <!-- <mat-label>Select an option</mat-label> -->
+                  <mat-select [(value)]="selectedUploadGroup" (selectionChange)="uploadTypeChange($event)">
+                    <mat-option value="folder">Folder</mat-option>
+                    <mat-option value="file">File</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-slide-toggle [(ngModel)]="isFileSplitMode" id="fileSplit" *ngIf="selectedUploadGroup == 'file'"
+                  (change)="splitMode()" matTooltip="Use to split when single file contains multiple cetificates">Split
+                  Mode
+                </mat-slide-toggle>
+              </ng-template>
+
+
+
+              <div style="height: calc(100% - 76px);padding: 12px; padding-left: 20px">
+
+
+                <!--  Certificate selection -->
+
+                <div style="height: 64px; display: flex;flex-direction: row">
+
+                  <form [formGroup]="uploadForm">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Document Type</mat-label>
+                      <mat-select formControlName="docType" placeholder="Select document type">
+                        <mat-option *ngFor="let doctype of docTypes" [value]="doctype">
+                          {{doctype}}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="docType.invalid">You must select document type</mat-error>
+                    </mat-form-field>
+
+
+                    <mat-form-field appearance="outline" *ngIf="selectedUploadGroup == 'file' && !isFileSplitMode">
+                      <mat-label>Roll No</mat-label>
+                      <mat-select formControlName="issuedTo" placeholder="issuedTo">
+                        <mat-option *ngFor="let rollNo of rollNoList" [value]="rollNo">{{rollNo}}</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="issuedTo.invalid">{{getSelectionValidationMessage()}}</mat-error>
+                    </mat-form-field>
+
+                    <input [hidden]="true" formControlName="folderSelection" type="file" (change)="fileChange($event)"
+                      accept="application/pdf,application/vnd.ms-excel" webkitdirectory mozdirectory msdirectory
+                      odirectory directory multiple #folderInput>
+                    <input [hidden]="true" formControlName="fileSelection" type="file" (change)="fileChange($event)"
+                      accept=".pdf,.png,.jpg,.jpeg,.bmp" #fileInput>
+                  </form>
+
+                  <button mat-stroked-button *ngIf="selectionDone && !uploadRequest.requestInProgress"
+                    (click)="resetFileSelection()" matTooltip="Clear Selection" style="margin: 4px 8px 12px 4px;">
+                    <mat-icon color="warn">cancel</mat-icon>
+                  </button>
+
+                  <!-- <mat-progress-spinner class="action-spinner" *ngIf="uploadRequest.requestInProgress"
+                    style="display: inline-block;" [diameter]="28" mode="indeterminate"></mat-progress-spinner> -->
+
+
+                  <button mat-raised-button color="primary"
+                    *ngIf="(!(uploadRequest.requestInProgress) && !(uploadRequest.showData))" (click)="selectionDone ? recordTransaction() : 
+                    selectedUploadGroup == 'file' ? fileInput.click() : folderInput.click()"
+                    [disabled]="!selectionForm.valid || docType.invalid || issuedTo.invalid"
+                    style="margin-bottom: 13px; margin-top: 3px;">
+                    <mat-icon style="margin-right: 4px;">{{buttonIcon}}</mat-icon>
+                    {{buttonName}}
+                  </button>
+                  <div fxFlex></div>
+                  <div *ngIf="(selectedUploadGroup == 'file' && isFileSplitMode) || selectedUploadGroup == 'folder'">
+
+                    <app-stat-bar [values]='statValues' [labels]='statLabels'></app-stat-bar>
+                  </div>
+
+                  <div *ngIf="(selectedUploadGroup == 'file' && !isFileSplitMode)">
+                    <app-stat-bar [values]='[statValues[0]]' [labels]='[statLabels[0]]'></app-stat-bar>
+                  </div>
+
+                </div>
+
+
+                <div class="fileSelectionArea" *ngIf="selectionDone">
+
+                  <!-- Roll no list   -->
+                  <div style="width: 192px"
+                    *ngIf="selectedUploadGroup == 'folder' || (isFileSplitMode && isSplitingDone)">
+                    <div cdkDropList class="example-list">
+                      <mat-chip [disableRipple]="true" [disabled]="i > minimumValidMatch ? true : false"
+                        class="example-box mat-elevation-z4" *ngFor="let rollno of rollNoList let i = index"
+                        matTooltip="{{(i > minimumValidMatch) ? 'No certificate available to record' : ''}}">
+                        <button mat-icon-button (click)="deleteRollno(i)" matTooltip="Remove this roll number"
+                          [disabled]="uploadRequest.showData || uploadRequest.requestInProgress" color="warn">
+                          <mat-icon>remove_circle</mat-icon>
+                        </button>
+                        <span style="margin-left: 4px">{{rollno}}</span>
+                      </mat-chip>
+                    </div>
+                  </div>
+
+
+                  <!-- Selected file list  -->
+                  <div [ngStyle]="{'width': isFileSplitMode ? '80%': '100%'}" >
+
+                    <div cdkDropList class="example-list" (cdkDropListDropped)="dropFile($event)">
+
+
+                      <!-- SINGLE FILE -->
+                      <div *ngIf="!isFileSplitMode">
+                        <mat-chip class="example-box mat-elevation-z4" disableRipple
+                          *ngFor="let file of selectedFiles;  let i = index" cdkDrag
+                          [disabled]="i > minimumValidMatch ? true : false" style="flex-direction: column;">
+
+                          <div style="width: 100%; align-items: center;">
+                            <span style="margin-left: 4px" class="wrap">{{file.name}}</span>
+                            <div fxFlex></div>
+                            <button mat-icon-button (click)="deleteCertificate(i)" style="margin-left: -16px"
+                              matTooltip="Remove this certificate" *ngIf="!uploadRequest.showData"
+                              [disabled]="uploadRequest.requestInProgress" color="warn">
+                              <mat-icon>remove_circle</mat-icon>
+                            </button>
+                            <span *ngIf="uploadRequest.showData"
+                              style="margin: 0px 8px 0px 8px; font-weight: bold">{{getResponseStatus(file.name)}}
+                            </span>
+                            <button mat-icon-button
+                              *ngIf="uploadRequest.showData && getResponseStatus(file.name) !='Success'">
+                              <mat-icon color="warn" matTooltip={{getResponseMessage(file.name)}}>
+                                info</mat-icon>
+                            </button>
+                            <button mat-icon-button
+                              *ngIf="uploadRequest.showData && getResponseStatus(file.name) ==='Success'">
+                              <mat-icon color="accent">cloud_done</mat-icon>
+                            </button>
+                          </div>
+                          <div style="width: 100%; align-items: center;" *ngIf="uploadRequest.showData">
+                            <span style="font-style: italic; font-weight: 300;">{{getResponseMessage(file.name)}}</span>
+                          </div>
+                        </mat-chip>
+                      </div>
+
+
+                      <!-- SPLIT MODE -->
+                      <div *ngIf="isFileSplitMode && isSplitingDone">
+                        <mat-chip class="example-box mat-elevation-z4" disableRipple
+                          *ngFor="let file of splitResult;  let i = index" cdkDrag
+                          [disabled]="i > minimumValidMatch ? true : false"  style="flex-direction: column;">
+                          <div style="width: 100%; align-items: center;">
+
+                            <span style="margin-left: 4px">{{file.name}}</span>
+                            <div fxFlex></div>
+                            <button mat-icon-button (click)="deleteCertificate(i)" style="margin-left: -16px"
+                              matTooltip="Remove this certificate" *ngIf="!uploadRequest.showData"
+                              [disabled]="uploadRequest.requestInProgress" color="warn">
+                              <mat-icon>remove_circle</mat-icon>
+                            </button>
+                            <p>
+                              <span *ngIf="uploadRequest.showData"
+                                style="margin: 0px 8px 0px 8px; font-weight: bold">{{getResponseStatus(file.name)}}
+                              </span>
+                            </p>
+                            <button mat-icon-button
+                              *ngIf="uploadRequest.showData && getResponseStatus(file.name) !='Success'">
+                              <mat-icon color="warn" matTooltip={{getResponseMessage(file.name)}}>info</mat-icon>
+                            </button>
+                            <button mat-icon-button
+                              *ngIf="uploadRequest.showData && getResponseStatus(file.name) ==='Success'">
+                              <mat-icon color="accent">cloud_done</mat-icon>
+                            </button>
+                          </div>
+                          <div style="width: 100%; align-items: center;" *ngIf="uploadRequest.showData">
+                            <span style="font-style: italic;font-weight: 300;">{{getResponseMessage(file.name)}}</span>
+                          </div>
+                        </mat-chip>
+
+                      </div>
+
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+
+</mat-card>

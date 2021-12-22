@@ -1,0 +1,16 @@
+<mat-toolbar class="footer" *ngIf="!shortName">
+  <span fxShow="true" fxHide.xs>
+    © Centre for Development of Advanced Computing, Hyderabad
+  </span>
+
+  <span fxShow="false" fxShow.xs>
+    © C-DAC, Hyderabad
+  </span>
+</mat-toolbar>
+
+
+<mat-toolbar class="footer" style="background-color: transparent;;" *ngIf="shortName">
+  <span *ngIf="shortName">
+    © C-DAC, Hyderabad
+  </span>
+</mat-toolbar>
